@@ -1,21 +1,27 @@
-CC                 :=  gcc
-CFLAGS             := -Isrc/include/ -c -O0
-LFLAGS             := 
-PFLAGS             := -lcheck -lm -lrt -lpthread -lsubunit
-OUTPUTFOLDER       := build
+
+OUTPUT_DIR         := build
+STORY_DIR          := stories
 SRC_DIR            := src tests
+STORY_FILES        := $(foreach storydir,$(STORY_DIR),$(wildcard $(storydir)/*.equations))
+STORY_PATHS        := $(foreach storyfile,$(STORY_FILES), ../$(storyfile))
 SOURCES            := $(foreach sdir,$(SRC_DIR),$(wildcard $(sdir)/*.c))
 OBJECTS_TO_COMPILE := $(SOURCES:.c=.o)
-OBJECTS_COMPILED   := $(addprefix $(OUTPUTFOLDER)/, $(OBJECTS_TO_COMPILE))
+OBJECTS_COMPILED   := $(addprefix $(OUTPUT_DIR)/, $(OBJECTS_TO_COMPILE))
+INCLUDE            := $(foreach sdir,$(SRC_DIR),-I$(sdir)/include)
+CC                 :=  gcc
+CFLAGS             := $(INCLUDE) -c -O0
+LFLAGS             := 
+PFLAGS             := -lcheck -lm -lrt -lpthread -lsubunit
 EXECUTABLE         := romanNumeralCalculator
 
 all: $(SOURCES) $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS_TO_COMPILE)
-	$(CC) $(LFLAGS) $(OBJECTS_COMPILED) $(PFLAGS) -o $(OUTPUTFOLDER)/$@
+	$(CC) $(LFLAGS) $(OBJECTS_COMPILED) $(PFLAGS) -o $(OUTPUT_DIR)/$@
+	ln -s $(STORY_PATHS) $(OUTPUT_DIR)
 
 .c.o:
-	$(CC) $(CFLAGS) $< -o $(OUTPUTFOLDER)/$@
+	$(CC) $(CFLAGS) $< -o $(OUTPUT_DIR)/$@
 
 clean:
-	$(RM) -f $(OBJECTS_COMPILED) $(OUTPUTFOLDER)/$(EXECUTABLE)
+	$(RM) -f $(OBJECTS_COMPILED) $(OUTPUT_DIR)/$(EXECUTABLE) $(OUTPUT_DIR)/*.equations
