@@ -4,10 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include "globals.h"
 
 #define STORY_READER_H
-
-#define bool char //boolean
 
 #define MAX_FILE_NAME_LENGTH 256
 #define MAX_LINE_SIZE 256

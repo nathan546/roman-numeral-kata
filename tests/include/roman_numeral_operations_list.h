@@ -2,7 +2,7 @@
 
 #define ROMAN_NUMERAL_OPERATIONS_LIST_H
 
-#define bool char //boolean
+#include "globals.h"
 
 //operand1 operator operand2 = result
 // I + I = II
