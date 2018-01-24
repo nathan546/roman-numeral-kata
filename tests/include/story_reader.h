@@ -1,14 +1,24 @@
 #ifndef STORY_READER_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+
 #define STORY_READER_H
 
+#define bool char //boolean
+
+#define MAX_FILE_NAME_LENGTH 256
+#define MAX_LINE_SIZE 256
+
 typedef struct{
-   char file[256];
-   FILE * fp;
-   char readBuffer[1024];
+   char file[MAX_FILE_NAME_LENGTH];
+   char readBuffer[MAX_LINE_SIZE];
+   FILE * fp;   
 }TEST_STORY;
 
-#define bool char //boolean
+typedef enum {OPERAND_1, OPERAND_2, RESULT, PARSE_COMPLETE} STORY_PARSE_STATE;
 
 TEST_STORY * story_create(char * file);
 bool story_open(TEST_STORY * story);

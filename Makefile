@@ -18,10 +18,11 @@ all: $(SOURCES) $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS_TO_COMPILE)
 	$(CC) $(LFLAGS) $(OBJECTS_COMPILED) $(PFLAGS) -o $(OUTPUT_DIR)/$@
+	rm -f $(OUTPUT_DIR)/*.equations
 	ln -s $(STORY_PATHS) $(OUTPUT_DIR)
 
 .c.o:
 	$(CC) $(CFLAGS) $< -o $(OUTPUT_DIR)/$@
 
 clean:
-	$(RM) -f $(OBJECTS_COMPILED) $(OUTPUT_DIR)/$(EXECUTABLE) $(OUTPUT_DIR)/*.equations
+	rm -f $(OBJECTS_COMPILED) $(OUTPUT_DIR)/$(EXECUTABLE) $(OUTPUT_DIR)/*.equations
