@@ -1,13 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <check.h>
-#include <pthread.h>
 
 #include "roman_numeral_calculator.h"
 #include "roman_numeral_operations_list.h"
 #include "story_reader.h"
-
-enum {ADDITION_STORY='1', SUBTRACTION_STORY='2', MANUAL_ENTRY='3', QUIT='4'};
 
 //Globals
 static ROMAN_NUMERAL_TEST_OPERATION * romanNumeralTestList = NULL;
@@ -18,7 +15,7 @@ START_TEST (check_roman_numeral_operation){
 }
 END_TEST
 
-void check_roman_numeral_setup(){
+static void check_roman_numeral_setup(){
     romanNumeralTestList = rntList_create(numberOperations); //Create a new test list of equations
     if(romanNumeralTestList != NULL){
         if(!rntList_parse(romanNumeralTestList, "./story_addition.equations")){ //Parse equations in from a file
@@ -29,13 +26,13 @@ void check_roman_numeral_setup(){
     }
 }
 
-void check_roman_numeral_teardown(){
+static void check_roman_numeral_teardown(){
     if(!rntList_destroy(romanNumeralTestList)){ //Clean up... Destroy the list after we're done testing
         printf("Unable to destroy Roman Numeral Test List\r\n");
     }
 }
 
-Suite * roman_numeral_calculator_test_suite(){
+static Suite * roman_numeral_calculator_test_suite(){
     Suite *s;
     TCase *tc_core;
 
@@ -58,7 +55,7 @@ Suite * roman_numeral_calculator_test_suite(){
     return s;
 }
 
-void performStory(){
+void performTestStory(){
     int number_failed;
     Suite *s;
     SRunner *sr;
@@ -70,51 +67,3 @@ void performStory(){
     number_failed = srunner_ntests_failed(sr);
     srunner_free(sr);
 }
-
-int main(void){
-
-    char input;
-
-    printf("\r\nWelcome to Roman Numeral Calculator Kata\r\n");
-    printf("\t1) Run Addition Test Story\r\n");
-    printf("\t2) Run Subtraction Test Story\r\n");
-    printf("\t3) Manually Enter Roman Numeral Expression\r\n");
-    printf("\t4) Quit\r\n\r\n");
-
-    while(1){
-
-        printf("Enter Option From Menu: ");
-
-        //Only accept standard ASCII characters -- discard new lines, carriage returns, etc
-        do{
-            input = getchar();
-        }while(input < '!' || input > '~');
-
-        //Perform input action
-        switch(input){
-
-            case ADDITION_STORY:
-                    performStory();
-                break;
-
-            case SUBTRACTION_STORY:
-                return EXIT_SUCCESS;
-                break;
-
-            case MANUAL_ENTRY:
-                return EXIT_SUCCESS;
-                break;
-
-            case QUIT:
-                return EXIT_SUCCESS;
-                break;
-
-            default:
-                printf("Input not recognized, try again...\r\n");
-                break;
-        }
-
-    }
-
-}
-
