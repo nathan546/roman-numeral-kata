@@ -16,17 +16,10 @@ TEST_STORY * story_create(char * file){
 }
 
 bool story_open(TEST_STORY * story){
-   short attemptCount = 0;
-
    if(story->fp == NULL){
-
-      do{
-         story->fp = fopen(story->file, "r");
-      }while(story->fp == NULL && attemptCount++ < 10);
-      
+      story->fp = fopen(story->file, "r");
       if(story->fp != NULL)
          return 1;
-
    }
 
    return 0;
@@ -50,21 +43,27 @@ bool story_close(TEST_STORY * story){
    return 1;
 }
 
-int story_peek_lines(TEST_STORY * story){
 
-   story_open(story);
-
+int story_peek_lines(char * file){
    char currentChar;
    int numberLines = 0;
 
-   while(!feof(story->fp)){
-      currentChar = fgetc(story->fp);
-      if(currentChar == '\n'){
-         numberLines++;
-      }
-   }
+   TEST_STORY * tempStory;
+   tempStory = story_create(file);
+   if(tempStory == NULL){
+      printf("Unable to create story, error number %d\r\n", errno);
+   }else{
+      story_open(tempStory);
 
-   story_close(story);
+      while(!feof(tempStory->fp)){
+         currentChar = fgetc(tempStory->fp);
+         if(currentChar == '\n'){
+            numberLines++;
+         }
+      }
+
+      story_close(tempStory);
+   }
 
    return numberLines;
 }

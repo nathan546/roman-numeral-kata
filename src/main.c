@@ -27,11 +27,11 @@ int main(void){
         switch(input){
 
             case ADDITION_STORY:
-                performTestStory();
+                performTestStory("./story_addition.equations");
                 break;
 
             case SUBTRACTION_STORY:
-                return EXIT_SUCCESS;
+                performTestStory("./story_subtraction.equations");
                 break;
 
             case MANUAL_ENTRY:

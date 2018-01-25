@@ -23,5 +23,6 @@ TEST_STORY * story_create(char * file);
 bool story_open(TEST_STORY * story);
 bool story_read_line(TEST_STORY * story);
 bool story_close(TEST_STORY * story);
+int story_peek_lines(char * file);
 
 #endif
