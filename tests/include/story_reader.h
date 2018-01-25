@@ -10,6 +10,7 @@
 
 #define MAX_FILE_NAME_LENGTH 256
 #define MAX_LINE_SIZE 256
+#define MINIMUM_OPERATION_CHARACTERS 5 //minimum number of characters to expect in an operation (V+V=X<CR>)
 
 typedef struct{
    char file[MAX_FILE_NAME_LENGTH];

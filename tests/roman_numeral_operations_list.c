@@ -28,7 +28,7 @@ bool rntList_parse(ROMAN_NUMERAL_OPERATION * romanNumeralTestList, char * fileNa
     }
 
     while(ret && story_read_line(story)){
-        lineLength = strlen(story->readBuffer);
+        lineLength = strlen(story->readBuffer)+1; //Also process null termination
         parseState = OPERAND_1;
 
         for(i = 0, j = 0; i < lineLength; i++){
@@ -55,14 +55,18 @@ bool rntList_parse(ROMAN_NUMERAL_OPERATION * romanNumeralTestList, char * fileNa
                     }               
                     break;
                 case RESULT:
-                    if(currentChar == '\r' || currentChar == '\n'){
-                        parseState = PARSE_COMPLETE;
+                    //If we see a line ending, null termination, space, or semicolon - consider the line complete and move on to the next line
+                    if( currentChar == '\r' ||
+                        currentChar == '\n' ||
+                        currentChar == '\0' ||
+                        currentChar == ' '  ||
+                        currentChar == ';')    {
+                            parseState = PARSE_COMPLETE;
                     }else{
-                        romanNumeralTestList[listPosition].result[j++] = currentChar;
+                            romanNumeralTestList[listPosition].result[j++] = currentChar;
                     }                   
                     break;
             }
-
             if(j == MAX_ROMAN_NUMERAL_CHARACTERS){
                 printf("Error: Operand on line greater than %d characters\r\n", MAX_ROMAN_NUMERAL_CHARACTERS);
                 ret = 0;
@@ -98,12 +102,7 @@ bool rntList_destroy(ROMAN_NUMERAL_OPERATION * romanNumeralTestList){
 
 bool rntList_operation_valid(ROMAN_NUMERAL_OPERATION * romanNumeralTestList){
 
-    rnc_perform_operation(NULL, romanNumeralTestList->operand1, NULL, NULL);
-
-    printf("Checking roman numeral operation: %s %c %s = %s \r\n", romanNumeralTestList->operand1,
-                                                                   romanNumeralTestList->operator,
-                                                                   romanNumeralTestList->operand2,
-                                                                   romanNumeralTestList->result); 
+    rnc_perform_operation(NULL, romanNumeralTestList->operand1, romanNumeralTestList->operator, romanNumeralTestList->operand2);
 
     return 1; 
 }

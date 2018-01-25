@@ -43,9 +43,9 @@ bool story_close(TEST_STORY * story){
    return 1;
 }
 
-
 int story_peek_lines(char * file){
    char currentChar;
+   int characterCount = 0;
    int numberLines = 0;
 
    TEST_STORY * tempStory;
@@ -54,12 +54,19 @@ int story_peek_lines(char * file){
       printf("Unable to create story, error number %d\r\n", errno);
    }else{
       story_open(tempStory);
-
+      
       while(!feof(tempStory->fp)){
          currentChar = fgetc(tempStory->fp);
+         characterCount++;
          if(currentChar == '\n'){
-            numberLines++;
+            if(characterCount > MINIMUM_OPERATION_CHARACTERS)
+               numberLines++;
+            characterCount = 0;
          }
+      }
+
+      if(characterCount > MINIMUM_OPERATION_CHARACTERS){ //We have one last line without a line ending (CR) 
+         numberLines++;
       }
 
       story_close(tempStory);
