@@ -1,6 +1,7 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "roman_numeral_calculator.h"
-#include "globals.h"
+
 
 //Guidelines from Kata specifications
 //------------------------------------------------------------------------------------
@@ -115,6 +116,28 @@ char * rnc_perform_operation(RomanNumeralCalculator * m, char * operand1, char o
 	printf("%d %c %d = %d\r\n\r\n", decimalOperand1, operator, decimalOperand2, decimalResult);
 
     return NULL;
+}
+
+bool rnc_perform_comparison(RomanNumeralCalculator * m, char * operand1, unsigned short decimalComparator){
+
+	unsigned short decimalOperand1;
+	char result[32];
+	bool ret = 0;
+
+	//printf("Confirming %s = %d ", operand1, decimalComparator);
+
+    decimalOperand1 = roman_numeral_to_decimal(operand1);
+    decimal_to_roman_numeral(decimalComparator, result);
+
+	if(  (strcmp(result, operand1) == 0)  && (decimalComparator == decimalOperand1) ){
+		//printf("... good!\r\n");
+		ret = 1;
+	}else{
+		printf("Confirming %s = %d ", operand1, decimalComparator);
+		printf("... bad!\r\n");
+	}
+
+	return ret;
 }
 
 void rnc_free(RomanNumeralCalculator * m){

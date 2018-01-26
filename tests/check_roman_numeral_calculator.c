@@ -12,16 +12,17 @@ static ROMAN_NUMERAL_OPERATION * romanNumeralTestList = NULL;
 static int numberOperations;
 static char storyFile[256];
 static pthread_mutex_t testMutex = PTHREAD_MUTEX_INITIALIZER;
+static EXPRESSION_TYPE expressionType;
 
 START_TEST (check_roman_numeral_operation){
-    ck_assert (rntList_operation_valid ( &romanNumeralTestList[_i] ) );
+    ck_assert (rntList_operation_valid(&romanNumeralTestList[_i], expressionType));
 }
 END_TEST
 
 static void check_roman_numeral_setup(){
     romanNumeralTestList = rntList_create(numberOperations); //Create a new test list of equations
     if(romanNumeralTestList != NULL){
-        if(!rntList_parse(romanNumeralTestList, storyFile)){ //Parse equations in from a file
+        if(!rntList_parse(romanNumeralTestList, storyFile, expressionType)){ //Parse equations in from a file
             printf ("Error parsing story file\r\n");
         }
     }else{
@@ -56,7 +57,7 @@ static Suite * roman_numeral_calculator_test_suite(){
     return s;
 }
 
-void performTestStory(char * storyFilePath){
+void performTestStory(char * storyFilePath, EXPRESSION_TYPE expressionTypeParam){
     int number_failed;
     Suite *s;
     SRunner *sr;
@@ -67,6 +68,8 @@ void performTestStory(char * storyFilePath){
         //Wrap with a mutex to ensure the global static variables are thread-safe
         //This isn't explicitly necessary in this example, as I haven't threaded anything (yet)...
         pthread_mutex_lock(&testMutex);
+
+        expressionType = expressionTypeParam;
 
         //Copy file name parameter into global file name parameter, for test suite to use
         memcpy(storyFile, storyFilePath, fileNameLength+1); //Make sure to copy the null termination!
