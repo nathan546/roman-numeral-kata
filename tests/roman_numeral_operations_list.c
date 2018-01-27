@@ -1,18 +1,61 @@
 
+/*******************************************************************
+* 
+*
+* DESCRIPTION :     Create a roman numeral test list... this is a list of
+*                   expressions (I+I=II) or comparisons(1=I) that can be parsed
+*                   in from a story file and cross-checked for validity with our
+*                   roman numeral calculator
+*
+* PROCESS :
+*                   [1]  Create a roman numeral test list
+*                   [2]  Parse a story file into the list
+*                   [3]  Confirm operations/comparisons from story file pass/fail
+*                   [4]  Destroy roman numeral test list
+*
+* NOTES :           Seg faults from character positions > MAX_ROMAN_NUMERAL_CHARACTERS not checked yet
+*
+* CHANGES :
+*             DATE                  WHO                    DETAIL
+*      August 26, 2018     Nathan Barrett Morrison      Original Code
+*
+*/
+
+
 #include "roman_numeral_operations_list.h"
 #include "story_reader.h"
 
+
+//Description:      Create a new contiguous roman numeral operation list
+//Input Parameters: Size of desired roman numeral operation list
+//Return:           Success - Pointer to roman numeral operation list of size listSize
+//                  Failure - NULL pointer
 ROMAN_NUMERAL_OPERATION * rntList_create(int listSize){
     ROMAN_NUMERAL_OPERATION * romanNumeralTestList;
     romanNumeralTestList = calloc(listSize * sizeof(ROMAN_NUMERAL_OPERATION), 1);
     return romanNumeralTestList;
 }
 
-//For parsing expressions/operations such as I+I=II
+//Description:      Destroy a roman numeral operation list
+//Input Parameters: Pointer to roman numeral operation list to destroy
+//Return:           Always true guarantee (for now)
+bool rntList_destroy(ROMAN_NUMERAL_OPERATION * romanNumeralTestList){
+    free(romanNumeralTestList);
+    romanNumeralTestList = NULL;
+    return 1;
+}
+
+//Description:      For parsing expressions/operations such as I+I=II in from a story file
+//Input Parameters: romanNumeralTestList - Pointer to roman numeral operation list
+//                  fileName - String containing path to story file
+//                  story - Pointer to test story reader for reading in story file
+//Return:           Success - true
+//                  Failure - false
 static bool rntList_parseOperations(ROMAN_NUMERAL_OPERATION * romanNumeralTestList, char * fileName, TEST_STORY * story){
 
     int listPosition = 0, lineLength;
-    int i, j; //iterators
+    int i, j; //iterators, i for the current character position in each line
+              //           j for the current character position in the post-parsed buffers (operand1, operand2, result)
     char currentChar;
     bool ret = 1;
     STORY_PARSE_STATE parseState;
@@ -80,11 +123,17 @@ static bool rntList_parseOperations(ROMAN_NUMERAL_OPERATION * romanNumeralTestLi
 
 }
 
-//For parsing comparsions such as 1=I
+//Description:      For parsing comparsions such as 1=I in from a story file
+//Input Parameters: romanNumeralTestList - Pointer to roman numeral operation list
+//                  fileName - String containing path to story file
+//                  story - Pointer to test story reader for reading in story file
+//Return:           Success - true
+//                  Failure - false
 static bool rntList_parseComparisons(ROMAN_NUMERAL_OPERATION * romanNumeralTestList, char * fileName, TEST_STORY * story){
 
     int listPosition = 0, lineLength;
-    int i, j; //iterators
+    int i, j; //iterators, i for the current character position in each line
+              //           j for the current character position in the post-parsed buffer (operand1)
     char currentChar;
     bool ret = 1;
     STORY_PARSE_STATE parseState;
@@ -131,6 +180,13 @@ static bool rntList_parseComparisons(ROMAN_NUMERAL_OPERATION * romanNumeralTestL
     return ret;
 }
 
+
+//Description:      For parsing story files into a roman numeral test list
+//Input Parameters: romanNumeralTestList - Pointer to roman numeral operation list
+//                  fileName - String containing path to story file
+//                  expressionType - Type of expression we're attepting to parse (I+I=II, II-I=I) or (1=I)
+//Return:           Success - true
+//                  Failure - false
 bool rntList_parse(ROMAN_NUMERAL_OPERATION * romanNumeralTestList, char * fileName, EXPRESSION_TYPE expressionType){
     TEST_STORY * story;
     bool ret = 1;
@@ -179,19 +235,18 @@ bool rntList_parse(ROMAN_NUMERAL_OPERATION * romanNumeralTestList, char * fileNa
 
 }
 
-bool rntList_destroy(ROMAN_NUMERAL_OPERATION * romanNumeralTestList){
-    free(romanNumeralTestList);
-    romanNumeralTestList = NULL;
-    return 1;
-}
 
+//Description:      Checks whether an roman numeral operation or comparison is valid
+//Input Parameters: romanNumeralTestList - Pointer to roman numeral operation list
+//                  expressionType - Type of expression we're attepting to parse (I+I=II, II-I=I) or (1=I)
+//Return:           Success - true
+//                  Failure - false
 bool rntList_operation_valid(ROMAN_NUMERAL_OPERATION * romanNumeralTestList, EXPRESSION_TYPE expressionType){
     bool ret = 0;
 
     switch(expressionType){
         case EXPRESSION_RN_OPERATIONS:
-            rnc_perform_operation(NULL, romanNumeralTestList->operand1, romanNumeralTestList->operator, romanNumeralTestList->operand2);
-            ret = 1; //fixed for now
+            ret = rnc_perform_operation(NULL, romanNumeralTestList->operand1, romanNumeralTestList->operator, romanNumeralTestList->operand2);
             break;
         case EXPRESSION_RN_TO_DEC_COMPARISONS:
             ret = rnc_perform_comparison(NULL, romanNumeralTestList->operand1, romanNumeralTestList->decimalComparator);
