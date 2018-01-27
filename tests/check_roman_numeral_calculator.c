@@ -25,6 +25,7 @@
 
 #include "roman_numeral_calculator.h"
 #include "roman_numeral_operations_list.h"
+#include "check_roman_numeral_calculator.h"
 #include "story_reader.h"
 
 //Private Globals
@@ -62,7 +63,6 @@ static void check_roman_numeral_teardown(){
         printf("Unable to destroy Roman Numeral Test List\r\n");
     }
 }
-
 
 //Description:      Creates test cases, fixtures, and loops for roman numeral operation test
 //Input Parameters: none
@@ -122,7 +122,7 @@ void performTestStory(char * storyFilePath, EXPRESSION_TYPE expressionTypeParam)
         pthread_mutex_unlock(&testMutex);
 
     }else{
-        printf("Error: Story File Path Too Long (> %d characters)\r\n", sizeof(storyFile));
+        printf("Error: Story File Path Too Long (> %ld characters)\r\n", sizeof(storyFile));
     }
 
 }

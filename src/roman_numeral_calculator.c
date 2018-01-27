@@ -40,6 +40,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "roman_numeral_calculator.h"
 
 
@@ -55,7 +56,7 @@ RomanNumeralCalculator * rnc_create(){
 //Input Parameters:
 //Return:           Success:  
 //                  Failure:  
-char * rnc_perform_operation(RomanNumeralCalculator * m, char * operand1, char operator, char * operand2){
+bool rnc_perform_operation(RomanNumeralCalculator * m, char * operand1, char operator, char * operand2){
     unsigned short decimalOperand1, decimalOperand2, decimalResult;
 
     char result[32];
@@ -69,7 +70,7 @@ char * rnc_perform_operation(RomanNumeralCalculator * m, char * operand1, char o
     printf("%s %c %s = %s\r\n", operand1, operator, operand2, result);
 	printf("%d %c %d = %d\r\n\r\n", decimalOperand1, operator, decimalOperand2, decimalResult);
 
-    return NULL;
+    return 0;
 }
 
 //Description:      

@@ -8,6 +8,7 @@
 
 #include "main.h"
 #include "roman_numeral_calculator.h"
+#include "check_roman_numeral_calculator.h"
 
 int main(void){
 

@@ -55,7 +55,7 @@ typedef struct RomanNumeralCalculator RomanNumeralCalculator;
 
 //Public Functions
 RomanNumeralCalculator * rnc_create();
-char * rnc_perform_operation(RomanNumeralCalculator * m, char * operand1, char operator, char * operand2);
+bool rnc_perform_operation(RomanNumeralCalculator * m, char * operand1, char operator, char * operand2);
 bool rnc_perform_comparison(RomanNumeralCalculator * m, char * operand1, unsigned short decimalComparator);
 void rnc_free(RomanNumeralCalculator * m);
 
