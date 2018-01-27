@@ -1,3 +1,7 @@
+//TO DO: License
+//       README.md
+//       Flow chart
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <check.h>
