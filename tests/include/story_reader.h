@@ -8,9 +8,9 @@
 
 #define STORY_READER_H
 
-#define MAX_FILE_NAME_LENGTH 256
-#define MAX_LINE_SIZE 256
-#define MINIMUM_OPERATION_CHARACTERS 3 //minimum number of characters to expect in an operation/equation
+#define MAX_FILE_NAME_LENGTH 256       //Maximum length of story file name
+#define MAX_LINE_SIZE 256              //Maximum size of each line in story
+#define MINIMUM_OPERATION_CHARACTERS 3 //Minimum number of characters to expect in an operation/equation
 
 typedef struct{
    char file[MAX_FILE_NAME_LENGTH];

@@ -45,6 +45,83 @@ bool rntList_destroy(ROMAN_NUMERAL_OPERATION * romanNumeralTestList){
     return 1;
 }
 
+
+
+//Description:      For parsing story files into a roman numeral test list
+//Input Parameters: romanNumeralTestList - Pointer to roman numeral operation list
+//                  fileName - String containing path to story file
+//                  expressionType - Type of expression we're attepting to parse (I+I=II, II-I=I) or (1=I)
+//Return:           Success - true
+//                  Failure - false
+bool rntList_parse(ROMAN_NUMERAL_OPERATION * romanNumeralTestList, char * fileName, EXPRESSION_TYPE expressionType){
+    TEST_STORY * story;
+    bool ret = 1;
+
+    story = story_create(fileName);
+    if(story == NULL){
+        printf("Error: Unable to create story, error number %d\r\n", errno);
+        ret = 0;
+    }
+
+    if(!story_open(story)){
+        printf("Error: Unable to open story, error number %d\r\n", errno);
+        ret = 0;
+    }
+
+    if(ret){
+
+        switch(expressionType){
+            case EXPRESSION_RN_OPERATIONS:
+
+                if(!rntList_parseOperations(romanNumeralTestList, fileName, story)){
+                    printf("Error: Unable to parse story file - aborting test...\r\n");
+                    ret = 0;
+                }
+
+                break;
+            case EXPRESSION_RN_TO_DEC_COMPARISONS:
+
+                if(!rntList_parseComparisons(romanNumeralTestList, fileName, story)){
+                    printf("Error: Unable to parse story file - aborting test...\r\n");
+                    ret = 0;
+                }
+
+                break;
+        }
+
+
+    }
+
+    if(!story_close(story)){
+        printf("Error: Unable to close story, error number %d\r\n", errno);
+        ret = 0;
+    }
+
+    return ret;
+
+}
+
+
+//Description:      Checks whether an roman numeral operation or comparison is valid
+//Input Parameters: romanNumeralTestList - Pointer to roman numeral operation list
+//                  expressionType - Type of expression we're attepting to parse (I+I=II, II-I=I) or (1=I)
+//Return:           Success - true
+//                  Failure - false
+bool rntList_operation_valid(ROMAN_NUMERAL_OPERATION * romanNumeralTestList, EXPRESSION_TYPE expressionType){
+    bool ret = 0;
+
+    switch(expressionType){
+        case EXPRESSION_RN_OPERATIONS:
+            ret = rnc_perform_operation(NULL, romanNumeralTestList->operand1, romanNumeralTestList->operator, romanNumeralTestList->operand2);
+            break;
+        case EXPRESSION_RN_TO_DEC_COMPARISONS:
+            ret = rnc_perform_comparison(NULL, romanNumeralTestList->operand1, romanNumeralTestList->decimalComparator);
+            break;
+    }
+
+    return ret;
+}
+
 //Description:      For parsing expressions/operations such as I+I=II in from a story file
 //Input Parameters: romanNumeralTestList - Pointer to roman numeral operation list
 //                  fileName - String containing path to story file
@@ -180,78 +257,3 @@ static bool rntList_parseComparisons(ROMAN_NUMERAL_OPERATION * romanNumeralTestL
     return ret;
 }
 
-
-//Description:      For parsing story files into a roman numeral test list
-//Input Parameters: romanNumeralTestList - Pointer to roman numeral operation list
-//                  fileName - String containing path to story file
-//                  expressionType - Type of expression we're attepting to parse (I+I=II, II-I=I) or (1=I)
-//Return:           Success - true
-//                  Failure - false
-bool rntList_parse(ROMAN_NUMERAL_OPERATION * romanNumeralTestList, char * fileName, EXPRESSION_TYPE expressionType){
-    TEST_STORY * story;
-    bool ret = 1;
-
-    story = story_create(fileName);
-    if(story == NULL){
-        printf("Error: Unable to create story, error number %d\r\n", errno);
-        ret = 0;
-    }
-
-    if(!story_open(story)){
-        printf("Error: Unable to open story, error number %d\r\n", errno);
-        ret = 0;
-    }
-
-    if(ret){
-
-        switch(expressionType){
-            case EXPRESSION_RN_OPERATIONS:
-
-                if(!rntList_parseOperations(romanNumeralTestList, fileName, story)){
-                    printf("Error: Unable to parse story file - aborting test...\r\n");
-                    ret = 0;
-                }
-
-                break;
-            case EXPRESSION_RN_TO_DEC_COMPARISONS:
-
-                if(!rntList_parseComparisons(romanNumeralTestList, fileName, story)){
-                    printf("Error: Unable to parse story file - aborting test...\r\n");
-                    ret = 0;
-                }
-
-                break;
-        }
-
-
-    }
-
-    if(!story_close(story)){
-        printf("Error: Unable to close story, error number %d\r\n", errno);
-        ret = 0;
-    }
-
-    return ret;
-
-}
-
-
-//Description:      Checks whether an roman numeral operation or comparison is valid
-//Input Parameters: romanNumeralTestList - Pointer to roman numeral operation list
-//                  expressionType - Type of expression we're attepting to parse (I+I=II, II-I=I) or (1=I)
-//Return:           Success - true
-//                  Failure - false
-bool rntList_operation_valid(ROMAN_NUMERAL_OPERATION * romanNumeralTestList, EXPRESSION_TYPE expressionType){
-    bool ret = 0;
-
-    switch(expressionType){
-        case EXPRESSION_RN_OPERATIONS:
-            ret = rnc_perform_operation(NULL, romanNumeralTestList->operand1, romanNumeralTestList->operator, romanNumeralTestList->operand2);
-            break;
-        case EXPRESSION_RN_TO_DEC_COMPARISONS:
-            ret = rnc_perform_comparison(NULL, romanNumeralTestList->operand1, romanNumeralTestList->decimalComparator);
-            break;
-    }
-
-    return ret;
-}
