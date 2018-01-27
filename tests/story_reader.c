@@ -71,15 +71,17 @@ bool story_read_line(TEST_STORY * story){
    short maxAttempts = 10;
 
    if(story->fp != NULL){
+
+      //Iteratively read in lines until we get end of file or line length > MINIMUM_OPERATION_CHARACTERS
       do{
          result = fgets(story->readBuffer, sizeof(story->readBuffer), story->fp);
          if(result != NULL){
             if(strlen(story->readBuffer) > MINIMUM_OPERATION_CHARACTERS){
                ret = 1;
-               break;
+               break; //Line length was > MINIMUM_OPERATION_CHARACTERS
             }
          }else{
-            break;
+            break; //End of file
          }
       }while(1);
    }
@@ -107,19 +109,22 @@ int story_peek_lines(char * file){
    char currentChar;
    int characterCount = 0;
    int numberLines = 0;
-
    TEST_STORY * tempStory;
+
+   //Create a new temporary test story pointer
    tempStory = story_create(file);
    if(tempStory == NULL){
       printf("Unable to create story, error number %d\r\n", errno);
    }else{
+      //Open story
       story_open(tempStory);
       
+      //Parse out lines by looking for CR or LF characters to indicate line endings
       while(!feof(tempStory->fp)){
          currentChar = fgetc(tempStory->fp);
          characterCount++;
-         if(currentChar == '\n'){
-            if(characterCount > MINIMUM_OPERATION_CHARACTERS)
+         if(currentChar == '\n' || currentChar == '\r'){
+            if(characterCount > MINIMUM_OPERATION_CHARACTERS) //Only count it as a line if line length > MINIMUM_OPERATION_CHARACTERS
                numberLines++;
             characterCount = 0;
          }
@@ -129,8 +134,10 @@ int story_peek_lines(char * file){
          numberLines++;
       }
 
+      //Close the story
       story_close(tempStory);
    }
 
+   //Return the number of lines we found!
    return numberLines;
 }

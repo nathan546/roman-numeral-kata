@@ -1,3 +1,19 @@
+
+/*******************************************************************
+* 
+*
+* DESCRIPTION :     Header file for story_file.c related functions
+*                   See the *.c file for more information
+*
+*
+* NOTES :           None
+*
+* CHANGES :
+*             DATE                  WHO                    DETAIL
+*      August 26, 2018     Nathan Barrett Morrison      Original Code
+*
+*/
+
 #ifndef STORY_READER_H
 
 #include <stdio.h>

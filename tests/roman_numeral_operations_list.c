@@ -32,7 +32,10 @@
 //                  Failure - NULL pointer
 ROMAN_NUMERAL_OPERATION * rntList_create(int listSize){
     ROMAN_NUMERAL_OPERATION * romanNumeralTestList;
-    romanNumeralTestList = calloc(listSize * sizeof(ROMAN_NUMERAL_OPERATION), 1);
+    romanNumeralTestList = calloc(listSize * sizeof(ROMAN_NUMERAL_OPERATION), 1); //clearing malloc to ensure
+                                                                                  //we start with empty strings by
+                                                                                  //default in the ROMAN_NUMERAL_OPERATON
+                                                                                  //structure
     return romanNumeralTestList;
 }
 
@@ -57,21 +60,24 @@ bool rntList_parse(ROMAN_NUMERAL_OPERATION * romanNumeralTestList, char * fileNa
     TEST_STORY * story;
     bool ret = 1;
 
+    //Create a new story pointer
     story = story_create(fileName);
     if(story == NULL){
         printf("Error: Unable to create story, error number %d\r\n", errno);
         ret = 0;
     }
 
+    //Open the story
     if(!story_open(story)){
         printf("Error: Unable to open story, error number %d\r\n", errno);
         ret = 0;
     }
 
+    //Make sure there were no create/open errors
     if(ret){
 
         switch(expressionType){
-            case EXPRESSION_RN_OPERATIONS:
+            case EXPRESSION_RN_OPERATIONS: //Parse a I+I=II type expression into our list
 
                 if(!rntList_parseOperations(romanNumeralTestList, fileName, story)){
                     printf("Error: Unable to parse story file - aborting test...\r\n");
@@ -79,7 +85,7 @@ bool rntList_parse(ROMAN_NUMERAL_OPERATION * romanNumeralTestList, char * fileNa
                 }
 
                 break;
-            case EXPRESSION_RN_TO_DEC_COMPARISONS:
+            case EXPRESSION_RN_TO_DEC_COMPARISONS: //Parse a 1=I type expression into our list
 
                 if(!rntList_parseComparisons(romanNumeralTestList, fileName, story)){
                     printf("Error: Unable to parse story file - aborting test...\r\n");
@@ -92,6 +98,7 @@ bool rntList_parse(ROMAN_NUMERAL_OPERATION * romanNumeralTestList, char * fileNa
 
     }
 
+    //Free up story-related memory structures
     if(!story_close(story)){
         printf("Error: Unable to close story, error number %d\r\n", errno);
         ret = 0;
@@ -111,10 +118,10 @@ bool rntList_operation_valid(ROMAN_NUMERAL_OPERATION * romanNumeralTestList, EXP
     bool ret = 0;
 
     switch(expressionType){
-        case EXPRESSION_RN_OPERATIONS:
+        case EXPRESSION_RN_OPERATIONS: //Check if a I+I=II type expression matches our calculator's results
             ret = rnc_perform_operation(NULL, romanNumeralTestList->operand1, romanNumeralTestList->operator, romanNumeralTestList->operand2);
             break;
-        case EXPRESSION_RN_TO_DEC_COMPARISONS:
+        case EXPRESSION_RN_TO_DEC_COMPARISONS: //Check if a 1=I type expression matches our calculator's results
             ret = rnc_perform_comparison(NULL, romanNumeralTestList->operand1, romanNumeralTestList->decimalComparator);
             break;
     }
@@ -137,6 +144,12 @@ static bool rntList_parseOperations(ROMAN_NUMERAL_OPERATION * romanNumeralTestLi
     bool ret = 1;
     STORY_PARSE_STATE parseState;
 
+    //1) Iterate through each line of the story
+    //   While doing so
+    //      2) Store each character into operand1 portion of current list position until a + or - is encountered
+    //      3) Store the + or - operand into the operand portion of the list structure
+    //      4) Store each character following a + or - into operand2 until an = is encountered
+    //      5) Store each character following the = into result until an end of line, comment, or end of file is encountered
     while(story_read_line(story)){
         lineLength = strlen(story->readBuffer)+1; //Also process null termination
         parseState = OPERAND_1;
@@ -168,7 +181,7 @@ static bool rntList_parseOperations(ROMAN_NUMERAL_OPERATION * romanNumeralTestLi
                     //If we see a line ending, null termination, space, or semicolon - consider the line complete and move on to the next line
                     if( currentChar == '\r' ||
                         currentChar == '\n' ||
-                        currentChar == '\0' ||
+                        currentChar == '\0' || //end of file
                         currentChar == ' '  ||
                         currentChar == ';')    {
 
@@ -215,6 +228,14 @@ static bool rntList_parseComparisons(ROMAN_NUMERAL_OPERATION * romanNumeralTestL
     bool ret = 1;
     STORY_PARSE_STATE parseState;
 
+
+    //1) Iterate through each line of the story
+    //   While doing so
+    //      2) Store each character into operand1 portion of current list position until an = is encountered
+    //      3) After = is encountered, convert operand1 into a decimal value and store it in the decimalComparator portion
+    //         of the current list position
+    //      4) Store each character following a = back into operand1, starting at the beginning of operand1 again
+    //      5) Continue 4) until new line, comment, or end of file is encountered
     while(story_read_line(story)){
         lineLength = strlen(story->readBuffer)+1; //Also process null termination
         
@@ -226,7 +247,7 @@ static bool rntList_parseComparisons(ROMAN_NUMERAL_OPERATION * romanNumeralTestL
             //If we see a line ending, null termination, space, or semicolon - consider the line complete and move on to the next line
             if( currentChar == '\r' ||
                 currentChar == '\n' ||
-                currentChar == '\0' ||
+                currentChar == '\0' || //end of file
                 currentChar == ' '  ||
                 currentChar == ';')    {
                 
