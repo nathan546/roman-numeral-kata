@@ -12,14 +12,17 @@
 #define MAX_LINE_SIZE 256              //Maximum size of each line in story
 #define MINIMUM_OPERATION_CHARACTERS 3 //Minimum number of characters to expect in an operation/equation
 
+//Structure used for test story file parsing
 typedef struct{
-   char file[MAX_FILE_NAME_LENGTH];
-   char readBuffer[MAX_LINE_SIZE];
-   FILE * fp;   
+   char file[MAX_FILE_NAME_LENGTH]; //File name we're parsing from
+   char readBuffer[MAX_LINE_SIZE];  //A buffer for storing each parsed line
+   FILE * fp;                       //Pointer to the file's descriptor (once opened)
 }TEST_STORY;
 
+//Parse states used for current state of parsing in a test story line
 typedef enum {OPERAND_1, OPERAND_2, RESULT, PARSE_COMPLETE} STORY_PARSE_STATE;
 
+//Public functions
 TEST_STORY * story_create(char * file);
 bool story_open(TEST_STORY * story);
 bool story_read_line(TEST_STORY * story);
