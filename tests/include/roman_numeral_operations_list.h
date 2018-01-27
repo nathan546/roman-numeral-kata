@@ -22,22 +22,6 @@
 
 #define ROMAN_NUMERAL_OPERATIONS_LIST_H
 
-#define MAX_ROMAN_NUMERAL_CHARACTERS 32 //Maximum number of roman numeral characters in an expression/result
-
-//Roman numeral operation structure for confirmation that
-//		operand1 operator operand2 = result
-//		I+I=II
-// OR
-//		operand1=decimalComparator
-//      1=I
-typedef struct{ 
-    char operand1[MAX_ROMAN_NUMERAL_CHARACTERS];  // String for first operand of roman numeral expression
-    char operator;                                // Operand of expression (+ or -)
-    char operand2[MAX_ROMAN_NUMERAL_CHARACTERS];  // String for second operator of roman numeral expression
-    char result[MAX_ROMAN_NUMERAL_CHARACTERS];    // Result, in string form of operand1 operand operator2
-    unsigned short decimalComparator;             // Integer comparator for comparing integer to operand1
-}ROMAN_NUMERAL_OPERATION;
-
 //Public functions
 ROMAN_NUMERAL_OPERATION * rntList_create(int listSize);
 bool rntList_parse(ROMAN_NUMERAL_OPERATION * romanNumeralTestList, char * fileName, EXPRESSION_TYPE story);

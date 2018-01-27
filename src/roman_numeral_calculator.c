@@ -2,14 +2,14 @@
 /*******************************************************************
 * 
 *
-* DESCRIPTION :     Create a roman numeral calculator to be used for:
+* DESCRIPTION :     roman numeral calculator functions to be used for:
 *                   [1] Roman Numeral Addition/Subtraction
 *                   [2] Roman Numeral to Decimal Conversion and Comparison
 *                   [3] Decimal to Roman Numeral Conversion and Comparison
 *
-* PROCESS :         [1] Create a new roman numeral calculator
+* PROCESS :         [1] Create a new roman numeral operation structure
 *                   [2] Perform the desired operations/comparisons
-*                   [3] Free the roman numeral calculator once done
+*                   [3] Free the roman numeral operation structure once done
 *
 * NOTES :                   
 *				Guidelines from Kata specifications
@@ -28,7 +28,7 @@
 *
 *				The maximum roman numeral is 3999 (MMMCMXCIX)
 *
-*       - Need to add calculator structure instantiation / deletion
+*
 *       - Need to complete roman_numeral_valid() function
 *       - Need to check for invalid negative numbers during subtractions
 *
@@ -44,31 +44,20 @@
 #include "roman_numeral_calculator.h"
 
 
-//Description:      Roman numeral calculator creation function
-//Input Parameters: none
-//Return:           Success:  Pointer to roman numeral calculator
-//                  Failure:  NULL
-RomanNumeralCalculator * rnc_create(){
-    return NULL;
-}
-
 //Description:      
 //Input Parameters:
 //Return:           Success:  
 //                  Failure:  
-bool rnc_perform_operation(RomanNumeralCalculator * m, char * operand1, char operator, char * operand2){
+bool rnc_perform_operation(ROMAN_NUMERAL_OPERATION * operation){
     unsigned short decimalOperand1, decimalOperand2, decimalResult;
 
     char result[32];
 
-    decimalOperand1 = roman_numeral_to_decimal(operand1);
-    decimalOperand2 = roman_numeral_to_decimal(operand2);
-    decimalResult = (operator == '+') ? (decimalOperand1 + decimalOperand2) : (decimalOperand1 - decimalOperand2);
+    decimalOperand1 = roman_numeral_to_decimal(operation->operand1);
+    decimalOperand2 = roman_numeral_to_decimal(operation->operand2);
+    decimalResult = (operation->operator == '+') ? (decimalOperand1 + decimalOperand2) : (decimalOperand1 - decimalOperand2);
 
-    decimal_to_roman_numeral(decimalResult, result);
-
-    printf("%s %c %s = %s\r\n", operand1, operator, operand2, result);
-	printf("%d %c %d = %d\r\n\r\n", decimalOperand1, operator, decimalOperand2, decimalResult);
+    decimal_to_roman_numeral(decimalResult, operation->result);
 
     return 0;
 }
@@ -77,34 +66,39 @@ bool rnc_perform_operation(RomanNumeralCalculator * m, char * operand1, char ope
 //Input Parameters:
 //Return:           Success:  
 //                  Failure:  
-bool rnc_perform_comparison(RomanNumeralCalculator * m, char * operand1, unsigned short decimalComparator){
+bool rnc_perform_comparison(ROMAN_NUMERAL_OPERATION * operation){
 
 	unsigned short decimalOperand1;
-	char result[32];
 	bool ret = 0;
 
 	//printf("Confirming %s = %d ", operand1, decimalComparator);
 
-    decimalOperand1 = roman_numeral_to_decimal(operand1);
-    decimal_to_roman_numeral(decimalComparator, result);
+    decimalOperand1 = roman_numeral_to_decimal(operation->operand1);
+    decimal_to_roman_numeral(operation->decimalComparator, operation->result);
 
-	if(  (strcmp(result, operand1) == 0)  && (decimalComparator == decimalOperand1) ){
+	if(  (strcmp(operation->result, operation->operand1) == 0)  && (operation->decimalComparator == decimalOperand1) ){
 		//printf("... good!\r\n");
 		ret = 1;
 	}else{
-		printf("Confirming %s = %d ", operand1, decimalComparator);
+		printf("Confirming %s = %d", operation->operand1, operation->decimalComparator);
 		printf("... bad!\r\n");
 	}
 
 	return ret;
 }
 
-//Description:      
-//Input Parameters:
-//Return:           Success:  
-//                  Failure:  
-void rnc_free(RomanNumeralCalculator * m){
-    return;
+
+bool rnc_is_roman_character(char * c){
+
+    if(*c >= 97) //Greater than or equal to 'a'
+        *c -= 32; //Convert from lower case to upper
+
+	for(int i = 0; i < ROMAN_CHARACTERS_AVAILABLE; i++)
+		if(romanCharacters[i] == *c)
+			return 1;
+
+	return 0;
+
 }
 
 //Description:      

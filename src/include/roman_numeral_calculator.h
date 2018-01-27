@@ -20,6 +20,7 @@
 #define ROMAIN_NUMERAL_CALCULATOR_H
 
 #define ROMAN_CHARACTERS_AVAILABLE 7 //Number of charactes in roman numeral alpabet
+#define MAX_ROMAN_NUMERAL_CHARACTERS 32 //Maximum number of roman numeral characters in an expression/result
 
 //1:1 translation mappings for roman numeral characters to their decimal equivalents
 static char romanCharacters[ROMAN_CHARACTERS_AVAILABLE] = {'M', 'D', 'C', 'L', 'X', 'V', 'I'};
@@ -37,10 +38,10 @@ static unsigned short romanNumeralLookupTable[256] =
        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,   //   2
        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,   //   3
        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,   //   4
-       0,    0,    0,  100,  500,    0,    0,    0,    0,    1,    0,    0,   50, 1000,    0,    0,
-       0,    0,    0,    0,    0,    0,    5,    0,   10,    0,    0,    0,    0,    0,    0,    0,
-       0,    0,    0,  100,  500,    0,    0,    0,    0,    1,    0,    0,   50, 1000,    0,    0,
-       0,    0,    0,    0,    0,    0,    5,    0,   10,    0,    0,    0,    0,    0,    0,    0,
+       0,    0,    0,  100,  500,    0,    0,    0,    0,    1,    0,    0,   50, 1000,    0,    0,   //   5
+       0,    0,    0,    0,    0,    0,    5,    0,   10,    0,    0,    0,    0,    0,    0,    0,   //   6
+       0,    0,    0,  100,  500,    0,    0,    0,    0,    1,    0,    0,   50, 1000,    0,    0,   //   7
+       0,    0,    0,    0,    0,    0,    5,    0,   10,    0,    0,    0,    0,    0,    0,    0,   //   8
        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,   //   9
        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,   //  10
        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,   //  11 
@@ -50,14 +51,25 @@ static unsigned short romanNumeralLookupTable[256] =
        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0    //  15
 };
 
-//Structure of a roman numeral calculator
-typedef struct RomanNumeralCalculator RomanNumeralCalculator;
+//Roman numeral operation structure for confirmation that
+//      operand1 operator operand2 = result
+//      I+I=II
+// OR
+//      operand1=decimalComparator
+//      1=I
+typedef struct{ 
+    char operand1[MAX_ROMAN_NUMERAL_CHARACTERS];  // String for first operand of roman numeral expression
+    char operator;                                // Operand of expression (+ or -)
+    char operand2[MAX_ROMAN_NUMERAL_CHARACTERS];  // String for second operator of roman numeral expression
+    char result[MAX_ROMAN_NUMERAL_CHARACTERS];    // Result, in string form of operand1 operand operator2
+    unsigned short decimalComparator;             // Integer comparator for comparing integer to operand1
+}ROMAN_NUMERAL_OPERATION;
+
 
 //Public Functions
-RomanNumeralCalculator * rnc_create();
-bool rnc_perform_operation(RomanNumeralCalculator * m, char * operand1, char operator, char * operand2);
-bool rnc_perform_comparison(RomanNumeralCalculator * m, char * operand1, unsigned short decimalComparator);
-void rnc_free(RomanNumeralCalculator * m);
+bool rnc_perform_operation(ROMAN_NUMERAL_OPERATION * operation);
+bool rnc_perform_comparison(ROMAN_NUMERAL_OPERATION * operation);
+bool rnc_is_roman_character(char * c);
 
 //Private functions
 static bool roman_numeral_valid(char * romanNumeral);

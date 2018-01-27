@@ -14,6 +14,7 @@
 *                   [4]  Destroy roman numeral test list
 *
 * NOTES :           Seg faults from character positions > MAX_ROMAN_NUMERAL_CHARACTERS not checked yet
+*                   Discard characters that are not roman
 *
 * CHANGES :
 *             DATE                  WHO                    DETAIL
@@ -119,10 +120,10 @@ bool rntList_operation_valid(ROMAN_NUMERAL_OPERATION * romanNumeralTestList, EXP
 
     switch(expressionType){
         case EXPRESSION_RN_OPERATIONS: //Check if a I+I=II type expression matches our calculator's results
-            ret = rnc_perform_operation(NULL, romanNumeralTestList->operand1, romanNumeralTestList->operator, romanNumeralTestList->operand2);
+            ret = rnc_perform_operation(romanNumeralTestList);
             break;
         case EXPRESSION_RN_TO_DEC_COMPARISONS: //Check if a 1=I type expression matches our calculator's results
-            ret = rnc_perform_comparison(NULL, romanNumeralTestList->operand1, romanNumeralTestList->decimalComparator);
+            ret = rnc_perform_comparison(romanNumeralTestList);
             break;
     }
 
