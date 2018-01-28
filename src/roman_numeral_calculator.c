@@ -164,8 +164,16 @@ unsigned short roman_numeral_to_decimal(char * romanNumeral){
 //                  outputRomanNumeral - String pointer to store converted roman numeral value into
 //Return:           Success: true
 //                  Failure: false
+//Notes:            This iterates through a roman numeral character/value table pair {'M', 'D', 'C', 'L', 'X', 'V', 'I'};
+//                                                                                      {1000, 500, 100, 50, 10, 5, 1};
+//                  starting at the highest value (M, 1000) and checking each value for the amount of times we can fit it into
+//                  our output sting.
+//                  We also check for >3 occurences of I,X,and C and compress it with the next highest value as necessary (so IIII -> IV)
 bool decimal_to_roman_numeral(short decimal, char * outputRomanNumeral){
-    unsigned short divisor, i, j, k = 0;
+    unsigned short divisor, i, j, k = 0; //iterators
+                                         //i for current roman numeral table position ('M', 'D', 'C', 'L', 'X', 'V', 'I')
+                                         //j for repetitions of character to be placed into output string
+                                         //k for current position in output string
 
     if(decimal > 0 && decimal < 4000){ //Only accept 1-3999 as valid
 
