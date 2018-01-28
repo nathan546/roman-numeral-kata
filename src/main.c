@@ -1,4 +1,4 @@
-//TO DO: License
+//TO DO:
 //       README.md
 //       Flow chart
 
@@ -116,7 +116,7 @@ void doManualOperation(ROMAN_NUMERAL_OPERATION * romanNumeralOperation){
                 }else{
                     printf("Error: Unable to perform operation\r\n");
                 }
-                
+
         }else{
             printf("Error:  Invalid input for operand2\r\n");
         }

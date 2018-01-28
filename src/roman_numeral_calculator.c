@@ -78,18 +78,14 @@ bool rnc_perform_comparison(ROMAN_NUMERAL_OPERATION * operation){
 	unsigned short decimalOperand1;
 	bool ret = 0;
 
-	//printf("Confirming %s = %d ", operand1, decimalComparator);
-
     decimalOperand1 = roman_numeral_to_decimal(operation->operand1);
-    decimal_to_roman_numeral(operation->decimalComparator, operation->result);
-
-	if(  (strcmp(operation->result, operation->operand1) == 0)  && (operation->decimalComparator == decimalOperand1) ){
-		//printf("... good!\r\n");
-		ret = 1;
-	}else{
-		printf("Confirming %s = %d", operation->operand1, operation->decimalComparator);
-		printf("... bad!\r\n");
-	}
+    if(decimalOperand1){
+	    if(decimal_to_roman_numeral(operation->decimalComparator, operation->result)){
+			if(  (strcmp(operation->result, operation->operand1) == 0)  && (operation->decimalComparator == decimalOperand1) ){
+				ret = 1;
+			}
+		}
+    }
 
 	return ret;
 }
