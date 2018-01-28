@@ -44,24 +44,32 @@
 #include "roman_numeral_calculator.h"
 
 
-//Description:      
-//Input Parameters:
-//Return:           Success:  
-//                  Failure:  
+//Description:      Performs a roman numeral operation, such as II+I=III or III-I=II
+//Input Parameters: operation - Pointer to structure containing operands and operator
+//Return:           Success:  true
+//                  Failure:  false
 bool rnc_perform_operation(ROMAN_NUMERAL_OPERATION * operation){
     unsigned short decimalOperand1, decimalOperand2;
     short decimalResult;
     bool ret = 0;
     char result[32];
 
+    //Convert operand 1 to decimal
     decimalOperand1 = roman_numeral_to_decimal(operation->operand1);
     if(decimalOperand1){
+
+    	//Convert operand 2 to decimal
     	decimalOperand2 = roman_numeral_to_decimal(operation->operand2);
     	if(decimalOperand2){
+
+    		//Perform addition or subtraction
     		decimalResult = (operation->operator == '+') ? (decimalOperand1 + decimalOperand2) : (decimalOperand1 - decimalOperand2);
+    		
+    		//Convert the addition or subtraction result back to a roman numeral value
     		if(decimal_to_roman_numeral(decimalResult, operation->result)){
     			ret = 1;
     		}
+
     		
     	}
 	}
@@ -69,33 +77,46 @@ bool rnc_perform_operation(ROMAN_NUMERAL_OPERATION * operation){
 
 }
 
-//Description:      
-//Input Parameters:
-//Return:           Success:  
-//                  Failure:  
+//Description:      Performs a roman numeral comparison of the form 1=I, ensuring we can convert a decimal
+//                  to an expected roman numeral value and back to a decimal value again (1 -> I and I -> 1)
+//Input Parameters: operation - Pointer to structure containing expected decimal value and roman numeral value
+//Return:           Success: true 
+//                  Failure: false
 bool rnc_perform_comparison(ROMAN_NUMERAL_OPERATION * operation){
 
 	unsigned short decimalOperand1;
 	bool ret = 0;
 
+	//Convert the incoming roman numeral value to a decimal
     decimalOperand1 = roman_numeral_to_decimal(operation->operand1);
     if(decimalOperand1){
+
+    	//Convert the incoming decimal value to a roman numeral
 	    if(decimal_to_roman_numeral(operation->decimalComparator, operation->result)){
+
+	    	//Confirm the two converted values match the two input values
 			if(  (strcmp(operation->result, operation->operand1) == 0)  && (operation->decimalComparator == decimalOperand1) ){
 				ret = 1;
 			}
+
 		}
+
     }
 
 	return ret;
 }
 
 
+//Description:      Check if a character is part of the roman numeral alphabet ('M', 'D', 'C', 'L', 'X', 'V', 'I')
+//Input Parameters: c - Pointer to a character to be checked
+//Return:           Success: true 
+//                  Failure: false
 bool rnc_is_roman_character(char * c){
 
     if(*c >= 97) //Greater than or equal to 'a'
         *c -= 32; //Convert from lower case to upper
 
+    //Loop through our roman character table and see if there is a match
 	for(int i = 0; i < ROMAN_CHARACTERS_AVAILABLE; i++)
 		if(romanCharacters[i] == *c)
 			return 1;
@@ -104,27 +125,32 @@ bool rnc_is_roman_character(char * c){
 
 }
 
-//Description:      
-//Input Parameters:
-//Return:           Success:  
-//                  Failure:  
+//Description:      Convert a roman numeral value to a decimal value
+//Input Parameters: romanNumeral - String pointer to roman numeral value to be converted
+//Return:           Success: converted decimal value in range 1-3999
+//                  Failure: 0
 unsigned short roman_numeral_to_decimal(char * romanNumeral){
 	unsigned short i, previous = 0, current;
 	short cumulator = 0;
 
 	if(roman_numeral_valid(romanNumeral)){
+
+		//Loop through the incoming string, character by character, and add
+		//the equivalent decimal values for each character into a cumulator.
 		for(i = 0; i < strlen(romanNumeral); i++){
-			current = romanNumeralLookupTable[romanNumeral[i]];
+			current = romanNumeralLookupTable[romanNumeral[i]]; //Look up table to convert ASCII character to decimal value
 			cumulator += current;
 
+			//We had a case of roman numeral subtractive notation, so remove the value from the cumulator(IV=5-1=4)
 			if(previous && (previous < current) ){
-				cumulator -= (2*previous);
+				cumulator -= (2*previous); //2x because we added in the subtractor once on the previous loop
 				previous = 0;
 			}else{
 				previous = current;
 			}
 
 		}
+
 	}
 
 	if(cumulator > 3999) //Only accept 1-3999 as valid
@@ -133,10 +159,11 @@ unsigned short roman_numeral_to_decimal(char * romanNumeral){
 	return cumulator;
 }
 
-//Description:      
-//Input Parameters:
-//Return:           Success:  
-//                  Failure:  
+//Description:      Convert a decimal value to a roman numeral value
+//Input Parameters: decimal - Incoming decimal value to be converted
+//                  outputRomanNumeral - String pointer to store converted roman numeral value into
+//Return:           Success: true
+//                  Failure: false
 bool decimal_to_roman_numeral(short decimal, char * outputRomanNumeral){
     unsigned short divisor, i, j, k = 0;
 
