@@ -70,11 +70,11 @@ typedef struct{
 bool rnc_perform_operation(ROMAN_NUMERAL_OPERATION * operation);
 bool rnc_perform_comparison(ROMAN_NUMERAL_OPERATION * operation);
 bool rnc_is_roman_character(char * c);
+unsigned short roman_numeral_to_decimal(char * romanNumeral); 
+bool decimal_to_roman_numeral(short decimal, char * outputRomanNumeral);
 
 //Private functions
 static bool roman_numeral_valid(char * romanNumeral);
-static unsigned short roman_numeral_to_decimal(char * romanNumeral); 
-static bool decimal_to_roman_numeral(unsigned short decimal, char * outputRomanNumeral);
 
 #endif
 

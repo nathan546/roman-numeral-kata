@@ -49,17 +49,24 @@
 //Return:           Success:  
 //                  Failure:  
 bool rnc_perform_operation(ROMAN_NUMERAL_OPERATION * operation){
-    unsigned short decimalOperand1, decimalOperand2, decimalResult;
-
+    unsigned short decimalOperand1, decimalOperand2;
+    short decimalResult;
+    bool ret = 0;
     char result[32];
 
     decimalOperand1 = roman_numeral_to_decimal(operation->operand1);
-    decimalOperand2 = roman_numeral_to_decimal(operation->operand2);
-    decimalResult = (operation->operator == '+') ? (decimalOperand1 + decimalOperand2) : (decimalOperand1 - decimalOperand2);
+    if(decimalOperand1){
+    	decimalOperand2 = roman_numeral_to_decimal(operation->operand2);
+    	if(decimalOperand2){
+    		decimalResult = (operation->operator == '+') ? (decimalOperand1 + decimalOperand2) : (decimalOperand1 - decimalOperand2);
+    		if(decimal_to_roman_numeral(decimalResult, operation->result)){
+    			ret = 1;
+    		}
+    		
+    	}
+	}
+    return ret;
 
-    decimal_to_roman_numeral(decimalResult, operation->result);
-
-    return 0;
 }
 
 //Description:      
@@ -105,15 +112,7 @@ bool rnc_is_roman_character(char * c){
 //Input Parameters:
 //Return:           Success:  
 //                  Failure:  
-static bool roman_numeral_valid(char * romanNumeral){
-	return 1;
-}
-
-//Description:      
-//Input Parameters:
-//Return:           Success:  
-//                  Failure:  
-static unsigned short roman_numeral_to_decimal(char * romanNumeral){
+unsigned short roman_numeral_to_decimal(char * romanNumeral){
 	unsigned short i, previous = 0, current;
 	short cumulator = 0;
 
@@ -132,6 +131,9 @@ static unsigned short roman_numeral_to_decimal(char * romanNumeral){
 		}
 	}
 
+	if(cumulator > 3999) //Only accept 1-3999 as valid
+		cumulator = 0;
+
 	return cumulator;
 }
 
@@ -139,54 +141,69 @@ static unsigned short roman_numeral_to_decimal(char * romanNumeral){
 //Input Parameters:
 //Return:           Success:  
 //                  Failure:  
-static bool decimal_to_roman_numeral(unsigned short decimal, char * outputRomanNumeral){
+bool decimal_to_roman_numeral(short decimal, char * outputRomanNumeral){
     unsigned short divisor, i, j, k = 0;
 
-    for(i = 0; i < ROMAN_CHARACTERS_AVAILABLE; i++){
-        divisor = decimal / romanValues[i];
+    if(decimal > 0 && decimal < 4000){ //Only accept 1-3999 as valid
 
-        //Check for 3x repetition of I, X, or C and compress if so
-        if( ( romanCharacters[i] == 'I' ||
-              romanCharacters[i] == 'X' ||
-              romanCharacters[i] == 'C'    ) && divisor > 3){
+	    for(i = 0; i < ROMAN_CHARACTERS_AVAILABLE; i++){
+	        divisor = decimal / romanValues[i];
 
-                //Consider: 10 + 4 = 14, X + IV = XIV - the modulo approach would show XIIII without this check
-                //          10 + 9 = 19, X + IX = XIX - the modulo approach would show XVIV without this check
-                unsigned short previousValue = romanNumeralLookupTable[outputRomanNumeral[k-1]];
-            
-                if( (previousValue + divisor*romanValues[i]) == (romanValues[i-2]-romanValues[i]) ) { //Check if the previous roman numeral can be merged in as well (XVIV -> XIX)
-                    outputRomanNumeral[k-1] = romanCharacters[i];
-                    outputRomanNumeral[k++] = romanCharacters[i-2];
-                }else{ //Just replace the repetition with the next highest roman numeral - 1, no additional merging necessary (XIII -> XIV)
+	        //Check for 3x repetition of I, X, or C and compress if so
+	        if( ( romanCharacters[i] == 'I' ||
+	              romanCharacters[i] == 'X' ||
+	              romanCharacters[i] == 'C'    ) && divisor > 3){
 
-                    if(previousValue == romanNumeralLookupTable[romanCharacters[i-1]]){
-                        if(romanCharacters[i-1] == 'V' ||
-                           romanCharacters[i-1] == 'L' ||
-                           romanCharacters[i-1] == 'D'){
-                        }
-                    }
+	                //Consider: 10 + 4 = 14, X + IV = XIV - the modulo approach would show XIIII without this check
+	                //          10 + 9 = 19, X + IX = XIX - the modulo approach would show XVIV without this check
+	                unsigned short previousValue = romanNumeralLookupTable[outputRomanNumeral[k-1]];
+	            
+	                if( (previousValue + divisor*romanValues[i]) == (romanValues[i-2]-romanValues[i]) ) { //Check if the previous roman numeral can be merged in as well (XVIV -> XIX)
+	                    outputRomanNumeral[k-1] = romanCharacters[i];
+	                    outputRomanNumeral[k++] = romanCharacters[i-2];
+	                }else{ //Just replace the repetition with the next highest roman numeral - 1, no additional merging necessary (XIII -> XIV)
 
-                    outputRomanNumeral[k++] = romanCharacters[i];
-                    outputRomanNumeral[k++] = romanCharacters[i-1];
-                }
+	                    if(previousValue == romanNumeralLookupTable[romanCharacters[i-1]]){
+	                        if(romanCharacters[i-1] == 'V' ||
+	                           romanCharacters[i-1] == 'L' ||
+	                           romanCharacters[i-1] == 'D'){
+	                        }
+	                    }
 
-                decimal = decimal % romanValues[i];
+	                    outputRomanNumeral[k++] = romanCharacters[i];
+	                    outputRomanNumeral[k++] = romanCharacters[i-1];
+	                }
 
-        }
+	                decimal = decimal % romanValues[i];
 
-        //Standard path, no special cases
-        else{
-            for(j = 0; j < divisor; j++){
-                outputRomanNumeral[k++] = romanCharacters[i];
-            }
-            decimal = decimal % romanValues[i];
-        }
+	        }
+
+	        //Standard path, no special cases
+	        else{
+	            for(j = 0; j < divisor; j++){
+	                outputRomanNumeral[k++] = romanCharacters[i];
+	            }
+	            decimal = decimal % romanValues[i];
+	        }
 
 
-    }
+	    }
 
-    outputRomanNumeral[k] = '\0'; //null termination
+	    outputRomanNumeral[k] = '\0'; //null termination
+
+	    return 1;
+	}
+
+	return 0;
 
 }
 
 
+
+//Description:      
+//Input Parameters:
+//Return:           Success:  
+//                  Failure:  
+static bool roman_numeral_valid(char * romanNumeral){
+	return 1;
+}
