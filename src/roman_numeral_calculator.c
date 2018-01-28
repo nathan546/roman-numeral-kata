@@ -158,14 +158,6 @@ bool decimal_to_roman_numeral(short decimal, char * outputRomanNumeral){
 	                    outputRomanNumeral[k-1] = romanCharacters[i];
 	                    outputRomanNumeral[k++] = romanCharacters[i-2];
 	                }else{ //Just replace the repetition with the next highest roman numeral - 1, no additional merging necessary (XIII -> XIV)
-
-	                    if(previousValue == romanNumeralLookupTable[romanCharacters[i-1]]){
-	                        if(romanCharacters[i-1] == 'V' ||
-	                           romanCharacters[i-1] == 'L' ||
-	                           romanCharacters[i-1] == 'D'){
-	                        }
-	                    }
-
 	                    outputRomanNumeral[k++] = romanCharacters[i];
 	                    outputRomanNumeral[k++] = romanCharacters[i-1];
 	                }
