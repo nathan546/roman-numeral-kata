@@ -112,12 +112,13 @@ bool rnc_perform_comparison(ROMAN_NUMERAL_OPERATION * operation){
 //Return:           Success: true 
 //                  Failure: false
 bool rnc_is_roman_character(char * c){
+    int i;
 
     if(*c >= 97) //Greater than or equal to 'a'
         *c -= 32; //Convert from lower case to upper
 
     //Loop through our roman character table and see if there is a match
-	for(int i = 0; i < ROMAN_CHARACTERS_AVAILABLE; i++)
+	for(i = 0; i < ROMAN_CHARACTERS_AVAILABLE; i++)
 		if(romanCharacters[i] == *c)
 			return 1;
 
@@ -156,6 +157,9 @@ unsigned short roman_numeral_to_decimal(char * romanNumeral){
 	if(cumulator > 3999) //Only accept 1-3999 as valid
 		cumulator = 0;
 
+    if(cumulator == 0)
+        printf("Error: unable to convert roman numeral value to a decimal value.  Check that values are within [1-3999] range.\r\n");
+
 	return cumulator;
 }
 
@@ -170,10 +174,10 @@ unsigned short roman_numeral_to_decimal(char * romanNumeral){
 //                  our output sting.
 //                  We also check for >3 occurences of I,X,and C and compress it with the next highest value as necessary (so IIII -> IV)
 bool decimal_to_roman_numeral(short decimal, char * outputRomanNumeral){
-    unsigned short divisor, i, j, k = 0; //iterators
-                                         //i for current roman numeral table position ('M', 'D', 'C', 'L', 'X', 'V', 'I')
-                                         //j for repetitions of character to be placed into output string
-                                         //k for current position in output string
+    unsigned short divisor, previousValue, i, j, k = 0; //iterators
+                                                        //i for current roman numeral table position ('M', 'D', 'C', 'L', 'X', 'V', 'I')
+                                                        //j for repetitions of character to be placed into output string
+                                                        //k for current position in output string
 
     if(decimal > 0 && decimal < 4000){ //Only accept 1-3999 as valid
 
@@ -187,12 +191,12 @@ bool decimal_to_roman_numeral(short decimal, char * outputRomanNumeral){
 
 	                //Consider: 10 + 4 = 14, X + IV = XIV - the modulo approach would show XIIII without this check
 	                //          10 + 9 = 19, X + IX = XIX - the modulo approach would show XVIV without this check
-	                unsigned short previousValue = romanNumeralLookupTable[outputRomanNumeral[k-1]];
-	            
+	                previousValue = romanNumeralLookupTable[outputRomanNumeral[k-1]];
+
 	                if( (previousValue + divisor*romanValues[i]) == (romanValues[i-2]-romanValues[i]) ) { //Check if the previous roman numeral can be merged in as well (XVIV -> XIX)
 	                    outputRomanNumeral[k-1] = romanCharacters[i];
 	                    outputRomanNumeral[k++] = romanCharacters[i-2];
-	                }else{ //Just replace the repetition with the next highest roman numeral - 1, no additional merging necessary (XIII -> XIV)
+	                }else{ //Just replace the repetition with the next highest roman numeral - 1, no additional merging necessary (XIIII -> XIV)
 	                    outputRomanNumeral[k++] = romanCharacters[i];
 	                    outputRomanNumeral[k++] = romanCharacters[i-1];
 	                }
@@ -217,6 +221,8 @@ bool decimal_to_roman_numeral(short decimal, char * outputRomanNumeral){
 	    return 1;
 	}
 
+    printf("Error: unable to convert decimal value to roman numeral value.  Check that values are within [1-3999] range.\r\n");
+
 	return 0;
 
 }
@@ -228,5 +234,96 @@ bool decimal_to_roman_numeral(short decimal, char * outputRomanNumeral){
 //Return:           Success:  
 //                  Failure:  
 static bool roman_numeral_valid(char * romanNumeral){
-	return 1;
+    int i = 0; //current position of incoming roman numeral string
+    bool ret = 1;
+    char previousCharacter = 0;
+    short consecutiveCharCounts[256]; //Table to keep track of number of character occurences
+                                      //Optimized for speed (256 indexes instead of ROMAN_CHARACTERS_AVAILABLE), at the cost of more ram consumption
+
+    memset(consecutiveCharCounts, 0, 256*sizeof(consecutiveCharCounts[0])); //Zero out the counts
+
+
+    for(i = 0; i < strlen(romanNumeral); i++){
+
+        if(rnc_is_roman_character(&romanNumeral[i])){
+
+            //Keep count of each occurence of a roman character
+            consecutiveCharCounts[romanNumeral[i]]++;
+
+            //Check for too many consecutive occurences of characters
+            if(previousCharacter != romanNumeral[i]){
+
+                //If the numeral is I, X or C you can't have more than three ("II" + "II" = "IV" not “IIII”).
+                //If the numeral is V, L or D you can't have more than one ("D" + "D" = "M" not “DD”)
+                switch(previousCharacter){
+
+                    case 'I':
+                    case 'X':
+                    case 'C':
+
+                        if(consecutiveCharCounts[previousCharacter] > 3){
+                            ret = 0;
+                            break;
+                        }else{
+                            consecutiveCharCounts[previousCharacter] = 0; //Reset consecutive counts
+                        }
+                        break;
+
+                    case 'V':
+                    case 'L':
+                    case 'D':
+
+                        if(consecutiveCharCounts[previousCharacter] > 1){
+                            ret = 0;
+                            break;
+                        }else{
+                            consecutiveCharCounts[previousCharacter] = 0; //Reset consecutive counts
+                        }
+                        break;
+
+                    default:
+                        break;    
+
+                }
+
+            }
+
+            //Get to our second character before looking for subtractive notation
+            if(previousCharacter != 0){
+
+                //Current character is greater than previous character, we may have found an error
+                //or a case of subtractive notation
+                if( romanNumeralLookupTable[romanNumeral[i]] > romanNumeralLookupTable[previousCharacter]){
+                    
+                    //Valid subtractive notations are
+                    //IV, IX, XL, XC, CD, CM
+                    if(  ( romanNumeral[i] == 'M' && previousCharacter != 'C' ) ||
+                         ( romanNumeral[i] == 'D' && previousCharacter != 'C' ) ||
+                         ( romanNumeral[i] == 'C' && previousCharacter != 'X' ) ||
+                         ( romanNumeral[i] == 'L' && previousCharacter != 'X' ) ||
+                         ( romanNumeral[i] == 'X' && previousCharacter != 'I' ) ||
+                         ( romanNumeral[i] == 'V' && previousCharacter != 'I' )
+                       ){
+
+                        ret = 0;
+                        break;
+
+                    }
+
+                }
+
+            }
+
+            previousCharacter = romanNumeral[i];
+
+        }else{
+            ret = 0;
+            break;
+        }
+
+    }
+
+
+
+	return ret;
 }
