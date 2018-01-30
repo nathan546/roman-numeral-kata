@@ -12,21 +12,21 @@
 *                   [3] Free the roman numeral operation structure once done
 *
 * NOTES :                   
-*				Guidelines from Kata specifications
+*                Guidelines from Kata specifications
 *
-*				Roman numerals consist of the following letters: I, V, X, L, C, D, and M which mean
-*				one, five, ten, fifty, hundred, five hundred and one thousand respectively.
+*                Roman numerals consist of the following letters: I, V, X, L, C, D, and M which mean
+*                one, five, ten, fifty, hundred, five hundred and one thousand respectively.
 *
-*				An example would be "XIV" + "LX" = "LXXIV"
-*				Numerals can be concatenated to form a larger numeral ("XX" + "II" = "XXII").
+*                An example would be "XIV" + "LX" = "LXXIV"
+*                Numerals can be concatenated to form a larger numeral ("XX" + "II" = "XXII").
 *
-*				If a lesser numeral is put before a bigger it means subtraction of the lesser from the bigger
-*				("IV" means four, "CM" means ninehundred).
+*                If a lesser numeral is put before a bigger it means subtraction of the lesser from the bigger
+*                ("IV" means four, "CM" means ninehundred).
 *
-*				If the numeral is I, X or C you can't have more than three ("II" + "II" = "IV" not “IIII”).
-*				If the numeral is V, L or D you can't have more than one ("D" + "D" = "M" not “DD”)
+*                If the numeral is I, X or C you can't have more than three ("II" + "II" = "IV" not “IIII”).
+*                If the numeral is V, L or D you can't have more than one ("D" + "D" = "M" not “DD”)
 *
-*				The maximum roman numeral is 3999 (MMMCMXCIX)
+*                The maximum roman numeral is 3999 (MMMCMXCIX)
 *
 *
 * CHANGES :
@@ -54,21 +54,21 @@ bool rnc_perform_operation(ROMAN_NUMERAL_OPERATION * operation){
     decimalOperand1 = roman_numeral_to_decimal(operation->operand1);
     if(decimalOperand1){
 
-    	//Convert operand 2 to decimal
-    	decimalOperand2 = roman_numeral_to_decimal(operation->operand2);
-    	if(decimalOperand2){
+        //Convert operand 2 to decimal
+        decimalOperand2 = roman_numeral_to_decimal(operation->operand2);
+        if(decimalOperand2){
 
-    		//Perform addition or subtraction
-    		decimalResult = (operation->operator == '+') ? (decimalOperand1 + decimalOperand2) : (decimalOperand1 - decimalOperand2);
-    		
-    		//Convert the addition or subtraction result back to a roman numeral value
-    		if(decimal_to_roman_numeral(decimalResult, operation->result)){
-    			ret = 1;
-    		}
+            //Perform addition or subtraction
+            decimalResult = (operation->operator == '+') ? (decimalOperand1 + decimalOperand2) : (decimalOperand1 - decimalOperand2);
+            
+            //Convert the addition or subtraction result back to a roman numeral value
+            if(decimal_to_roman_numeral(decimalResult, operation->result)){
+                ret = 1;
+            }
 
-    		
-    	}
-	}
+            
+        }
+    }
     return ret;
 
 }
@@ -80,26 +80,26 @@ bool rnc_perform_operation(ROMAN_NUMERAL_OPERATION * operation){
 //                  Failure: false
 bool rnc_perform_comparison(ROMAN_NUMERAL_OPERATION * operation){
 
-	unsigned short decimalOperand1;
-	bool ret = 0;
+    unsigned short decimalOperand1;
+    bool ret = 0;
 
-	//Convert the incoming roman numeral value to a decimal
+    //Convert the incoming roman numeral value to a decimal
     decimalOperand1 = roman_numeral_to_decimal(operation->operand1);
     if(decimalOperand1){
 
-    	//Convert the incoming decimal value to a roman numeral
-	    if(decimal_to_roman_numeral(operation->decimalComparator, operation->result)){
+        //Convert the incoming decimal value to a roman numeral
+        if(decimal_to_roman_numeral(operation->decimalComparator, operation->result)){
 
-	    	//Confirm the two converted values match the two input values
-			if(  (strcmp(operation->result, operation->operand1) == 0)  && (operation->decimalComparator == decimalOperand1) ){
-				ret = 1;
-			}
+            //Confirm the two converted values match the two input values
+            if(  (strcmp(operation->result, operation->operand1) == 0)  && (operation->decimalComparator == decimalOperand1) ){
+                ret = 1;
+            }
 
-		}
+        }
 
     }
 
-	return ret;
+    return ret;
 }
 
 
@@ -114,11 +114,11 @@ bool rnc_is_roman_character(char * c){
         *c -= 32; //Convert from lower case to upper
 
     //Loop through our roman character table and see if there is a match
-	for(i = 0; i < ROMAN_CHARACTERS_AVAILABLE; i++)
-		if(romanCharacters[i] == *c)
-			return 1;
+    for(i = 0; i < ROMAN_CHARACTERS_AVAILABLE; i++)
+        if(romanCharacters[i] == *c)
+            return 1;
 
-	return 0;
+    return 0;
 
 }
 
@@ -127,36 +127,36 @@ bool rnc_is_roman_character(char * c){
 //Return:           Success: converted decimal value in range 1-3999
 //                  Failure: 0
 unsigned short roman_numeral_to_decimal(char * romanNumeral){
-	unsigned short i, previous = 0, current;
-	short cumulator = 0;
+    unsigned short i, previous = 0, current;
+    short cumulator = 0;
 
-	if(roman_numeral_valid(romanNumeral)){
+    if(roman_numeral_valid(romanNumeral)){
 
-		//Loop through the incoming string, character by character, and add
-		//the equivalent decimal values for each character into a cumulator.
-		for(i = 0; i < strlen(romanNumeral); i++){
-			current = romanNumeralLookupTable[romanNumeral[i]]; //Look up table to convert ASCII character to decimal value
-			cumulator += current;
+        //Loop through the incoming string, character by character, and add
+        //the equivalent decimal values for each character into a cumulator.
+        for(i = 0; i < strlen(romanNumeral); i++){
+            current = romanNumeralLookupTable[romanNumeral[i]]; //Look up table to convert ASCII character to decimal value
+            cumulator += current;
 
-			//We had a case of roman numeral subtractive notation, so remove the value from the cumulator(IV=5-1=4)
-			if(previous && (previous < current) ){
-				cumulator -= (2*previous); //2x because we added in the subtractor once on the previous loop
-				previous = 0;
-			}else{
-				previous = current;
-			}
+            //We had a case of roman numeral subtractive notation, so remove the value from the cumulator(IV=5-1=4)
+            if(previous && (previous < current) ){
+                cumulator -= (2*previous); //2x because we added in the subtractor once on the previous loop
+                previous = 0;
+            }else{
+                previous = current;
+            }
 
-		}
+        }
 
-	}
+    }
 
-	if(cumulator > 3999) //Only accept 1-3999 as valid
-		cumulator = 0;
+    if(cumulator > 3999) //Only accept 1-3999 as valid
+        cumulator = 0;
 
     if(cumulator == 0)
         printf("Error: unable to convert roman numeral value to a decimal value.  Check that values are within [1-3999] range.\r\n");
 
-	return cumulator;
+    return cumulator;
 }
 
 //Description:      Convert a decimal value to a roman numeral value
@@ -177,54 +177,54 @@ bool decimal_to_roman_numeral(short decimal, char * outputRomanNumeral){
 
     if(decimal > 0 && decimal < 4000){ //Only accept 1-3999 as valid
 
-	    for(i = 0; i < ROMAN_CHARACTERS_AVAILABLE; i++){
-	        divisor = decimal / romanValues[i];
+        for(i = 0; i < ROMAN_CHARACTERS_AVAILABLE; i++){
+            divisor = decimal / romanValues[i];
 
-	        //Terminate if we're going to overflow the MAX_ROMAN_NUMERAL_CHARACTERS character string buffer
-	        if(k >= MAX_ROMAN_NUMERAL_CHARACTERS-1){ //leave room for null termination
-	        	return 0;
-	        }
+            //Terminate if we're going to overflow the MAX_ROMAN_NUMERAL_CHARACTERS character string buffer
+            if(k >= MAX_ROMAN_NUMERAL_CHARACTERS-1){ //leave room for null termination
+                return 0;
+            }
 
-	        //Check for 3x repetition of I, X, or C and compress if so
-	        if( ( romanCharacters[i] == 'I' ||
-	              romanCharacters[i] == 'X' ||
-	              romanCharacters[i] == 'C'    ) && divisor > 3){
+            //Check for 3x repetition of I, X, or C and compress if so
+            if( ( romanCharacters[i] == 'I' ||
+                  romanCharacters[i] == 'X' ||
+                  romanCharacters[i] == 'C'    ) && divisor > 3){
 
-	                //Consider: 10 + 4 = 14, X + IV = XIV - the modulo approach would show XIIII without this check
-	                //          10 + 9 = 19, X + IX = XIX - the modulo approach would show XVIV without this check
-	                previousValue = romanNumeralLookupTable[outputRomanNumeral[k-1]];
+                    //Consider: 10 + 4 = 14, X + IV = XIV - the modulo approach would show XIIII without this check
+                    //          10 + 9 = 19, X + IX = XIX - the modulo approach would show XVIV without this check
+                    previousValue = romanNumeralLookupTable[outputRomanNumeral[k-1]];
 
-	                if( (previousValue + divisor*romanValues[i]) == (romanValues[i-2]-romanValues[i]) ) { //Check if the previous roman numeral can be merged in as well (XVIV -> XIX)
-	                    outputRomanNumeral[k-1] = romanCharacters[i];
-	                    outputRomanNumeral[k++] = romanCharacters[i-2];
-	                }else{ //Just replace the repetition with the next highest roman numeral - 1, no additional merging necessary (XIIII -> XIV)
-	                    outputRomanNumeral[k++] = romanCharacters[i];
-	                    outputRomanNumeral[k++] = romanCharacters[i-1];
-	                }
+                    if( (previousValue + divisor*romanValues[i]) == (romanValues[i-2]-romanValues[i]) ) { //Check if the previous roman numeral can be merged in as well (XVIV -> XIX)
+                        outputRomanNumeral[k-1] = romanCharacters[i];
+                        outputRomanNumeral[k++] = romanCharacters[i-2];
+                    }else{ //Just replace the repetition with the next highest roman numeral - 1, no additional merging necessary (XIIII -> XIV)
+                        outputRomanNumeral[k++] = romanCharacters[i];
+                        outputRomanNumeral[k++] = romanCharacters[i-1];
+                    }
 
-	                decimal = decimal % romanValues[i];
+                    decimal = decimal % romanValues[i];
 
-	        }
+            }
 
-	        //Standard path, no special cases
-	        else{
-	            for(j = 0; j < divisor; j++){
-	                outputRomanNumeral[k++] = romanCharacters[i];
-	            }
-	            decimal = decimal % romanValues[i];
-	        }
+            //Standard path, no special cases
+            else{
+                for(j = 0; j < divisor; j++){
+                    outputRomanNumeral[k++] = romanCharacters[i];
+                }
+                decimal = decimal % romanValues[i];
+            }
 
 
-	    }
+        }
 
-	    outputRomanNumeral[k] = '\0'; //null termination
+        outputRomanNumeral[k] = '\0'; //null termination
 
-	    return 1;
-	}
+        return 1;
+    }
 
     printf("Error: unable to convert decimal value to roman numeral value.  Check that values are within [1-3999] range.\r\n");
 
-	return 0;
+    return 0;
 
 }
 
@@ -326,5 +326,5 @@ static bool roman_numeral_valid(char * romanNumeral){
 
 
 
-	return ret;
+    return ret;
 }

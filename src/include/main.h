@@ -60,7 +60,7 @@ static char * subtractionStoryDescript = \
       "\t    so the source will subtract II-I internally and ensure the result is I using libcheck\r\n";     
 
 static char * fossList = \
-	  "\r\n\tThis is a free open source software notice letting the user know that the program uses: \r\n" \
+      "\r\n\tThis is a free open source software notice letting the user know that the program uses: \r\n" \
       "\t    Libcheck (LGPLV2) from https://github.com/libcheck/check\r\n" \
       "\t    Libsubunit (Apache & BSD) from https://github.com/testing-cabal/subunit\r\n";
 
