@@ -1,2 +1,5 @@
-II-I=I
-IV-I=III
+II-I=I                 ;2-1=1
+IV-I=III               ;4-1=3
+XIV+I=XIII             ;14-1=13
+MMMXXXV-MCXI=MCMXXIV   ;3035-1111=1924
+
