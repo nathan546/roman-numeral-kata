@@ -7,170 +7,6 @@
 #include <check.h>
 
 #include "main.h"
-#include "roman_numeral_calculator.h"
-#include "check_roman_numeral_calculator.h"
-#include "roman_numeral_operations_list.h"
-
-char getAlphanumericChar(){
-    char input;
-    
-    //Only accept standard alphanumeric characters -- discard new lines, carriage returns, etc
-    do{
-        input = getchar();
-    }while(input < '!' || input > '~');
-
-    return input;
-}
-
-bool isNumericChar(char * input){
-    return ( (*input >= '0') && (*input <= '9'));
-}
-
-void flushInput(){
-    char input;
-    
-    do{
-        input = getchar();
-    }while(input != '\r' && input !='\n');
-
-}
-
-
-bool getValue(char * input, bool (*functionPointer)(char*)){
-    short i = 0; //Currently parsed string position
-    bool doneParsing = 0;
-
-    do{
-
-        if(i == 0){
-            input[i] = getAlphanumericChar(); //Discard CR/LFs
-        }else{
-            input[i] = getchar(); //Monitor for CR/LFs
-        }
-
-        //End of line or exceeded max characters
-        if( i >= MAX_ROMAN_NUMERAL_CHARACTERS ||
-            input[i] == '\r'                  ||
-            input[i] == '\n' ){
-                input[i] = '\0'; //null termination
-                doneParsing = 1;
-        }else{
-            //Only accept types of characters which return true from function pointer
-            if( (*functionPointer)(&input[i]) ){
-                i++;
-            }else{
-                flushInput();
-                break;
-            }     
-        }
-
-    }while(!doneParsing);
-
-    return doneParsing;
-}
-
-
-void doManualOperation(ROMAN_NUMERAL_OPERATION * romanNumeralOperation){
-    printf("Input Operand 1: ");
-    if(getValue(romanNumeralOperation->operand1, rnc_is_roman_character)){ //Get a roman numeral value
-        printf("Input Operand 2: ");
-        if(getValue(romanNumeralOperation->operand2, rnc_is_roman_character)){ //Get a roman numeral value
-                
-                if(rnc_perform_operation(romanNumeralOperation)){
-                    printf("\r\nResult: %s %c %s = %s\r\n\r\n", romanNumeralOperation->operand1,
-                                                                romanNumeralOperation->operator,
-                                                                romanNumeralOperation->operand2,
-                                                                romanNumeralOperation->result);
-                }else{
-                    printf("Error: Unable to perform operation\r\n");
-                }
-
-        }else{
-            printf("Error:  Invalid input for operand2\r\n");
-        }
-    }else{
-        printf("Error:  Invalid input for operand1\r\n");
-    }
-}
-
-
-void doDecimalToRomanNumeral(){
-    char input[MAX_ROMAN_NUMERAL_CHARACTERS];
-    int decimalValue;
-
-    printf("Input Decimal Integer: ");
-
-    if(getValue(input, isNumericChar)){ //get decimal value as a string
-        decimalValue = atoi(input); //Convert string to int
-        if(decimal_to_roman_numeral(decimalValue, input)){
-            printf("\r\nResult: %d is %s in roman numerals\r\n\r\n", decimalValue, input);
-        }else{
-            printf("Error: unable to convert decimal value to roman numeral value\r\n");
-        }
-    }else{
-        printf("Error: Unable to read in decimal value from command line\r\n");
-    }
-}
-
-void doRomanNumeralToDecimal(){
-    char input[MAX_ROMAN_NUMERAL_CHARACTERS];
-    int decimalValue;
-    printf("Input Roman Numeral: ");
-    if(getValue(input, rnc_is_roman_character)){ //get a roman numeral value
-
-        if(decimalValue = roman_numeral_to_decimal(input)){
-            printf("\r\nResult: %s is %d in decimal\r\n\r\n", input, decimalValue);
-        }else{
-            printf("Error: Invalid input for roman numeral value\r\n");
-        }
-
-    }else{
-        printf("Error: Invalid input for roman numeral value\r\n");
-    }
-
-}
-
-void manualEntry(){
-        char input;
-        bool exit = 0;
-        ROMAN_NUMERAL_OPERATION romanNumeralOperation;
-
-        printf("%s\r\n", manualMainMenu);
-
-        while(!exit){
-
-            printf("Enter Option From Manual Menu: ");
-
-            input = getAlphanumericChar();
-
-            //Perform input action
-            switch(input){
-                case MANUAL_ADDITION:
-                    romanNumeralOperation.operator = '+';
-                    doManualOperation(&romanNumeralOperation);
-                    break;
-                case MANUAL_SUBTRACTION:
-                    romanNumeralOperation.operator = '-';
-                    doManualOperation(&romanNumeralOperation);
-                    break;
-                case MANUAL_DEC_TO_RN:
-                    doDecimalToRomanNumeral();
-                    break;
-                case MANUAL_RN_TO_DEC:
-                    doRomanNumeralToDecimal();
-                    break;
-                case MANUAL_QUIT:
-                    printf("%s\r\n", mainMenu);
-                    exit = 1;
-                    break;
-                default:
-                    printf("Input not recognized, try again...\r\n");
-                    break;
-            }
-
-        }
-
-}
 
 int main(void){
 
@@ -219,5 +55,164 @@ int main(void){
 
 }
 
+static void manualEntry(){
+        char input;
+        bool exit = 0;
+        ROMAN_NUMERAL_OPERATION romanNumeralOperation;
 
+        printf("%s\r\n", manualMainMenu);
+
+        while(!exit){
+
+            printf("Enter Option From Manual Menu: ");
+
+            input = getAlphanumericChar();
+
+            //Perform input action
+            switch(input){
+                case MANUAL_ADDITION:
+                    romanNumeralOperation.operator = '+';
+                    doManualOperation(&romanNumeralOperation);
+                    break;
+                case MANUAL_SUBTRACTION:
+                    romanNumeralOperation.operator = '-';
+                    doManualOperation(&romanNumeralOperation);
+                    break;
+                case MANUAL_DEC_TO_RN:
+                    doDecimalToRomanNumeral();
+                    break;
+                case MANUAL_RN_TO_DEC:
+                    doRomanNumeralToDecimal();
+                    break;
+                case MANUAL_QUIT:
+                    printf("%s\r\n", mainMenu);
+                    exit = 1;
+                    break;
+                default:
+                    printf("Input not recognized, try again...\r\n");
+                    break;
+            }
+
+        }
+
+}
+
+static char getAlphanumericChar(){
+    char input;
+    
+    //Only accept standard alphanumeric characters -- discard new lines, carriage returns, etc
+    do{
+        input = getchar();
+    }while(input < '!' || input > '~');
+
+    return input;
+}
+
+static bool isNumericChar(char * input){
+    return ( (*input >= '0') && (*input <= '9'));
+}
+
+static void flushInput(){
+    char input;
+    
+    do{
+        input = getchar();
+    }while(input != '\r' && input !='\n');
+
+}
+
+
+static bool getValue(char * input, bool (*functionPointer)(char*)){
+    short i = 0; //Currently parsed string position
+    bool doneParsing = 0;
+
+    do{
+
+        if(i == 0){
+            input[i] = getAlphanumericChar(); //Discard CR/LFs
+        }else{
+            input[i] = getchar(); //Monitor for CR/LFs
+        }
+
+        //End of line or exceeded max characters
+        if( i >= MAX_ROMAN_NUMERAL_CHARACTERS ||
+            input[i] == '\r'                  ||
+            input[i] == '\n' ){
+                input[i] = '\0'; //null termination
+                doneParsing = 1;
+        }else{
+            //Only accept types of characters which return true from function pointer
+            if( (*functionPointer)(&input[i]) ){
+                i++;
+            }else{
+                flushInput();
+                break;
+            }     
+        }
+
+    }while(!doneParsing);
+
+    return doneParsing;
+}
+
+
+static void doManualOperation(ROMAN_NUMERAL_OPERATION * romanNumeralOperation){
+    printf("Input Operand 1: ");
+    if(getValue(romanNumeralOperation->operand1, rnc_is_roman_character)){ //Get a roman numeral value
+        printf("Input Operand 2: ");
+        if(getValue(romanNumeralOperation->operand2, rnc_is_roman_character)){ //Get a roman numeral value
+                
+                if(rnc_perform_operation(romanNumeralOperation)){
+                    printf("\r\nResult: %s %c %s = %s\r\n\r\n", romanNumeralOperation->operand1,
+                                                                romanNumeralOperation->operator,
+                                                                romanNumeralOperation->operand2,
+                                                                romanNumeralOperation->result);
+                }else{
+                    printf("Error: Unable to perform operation\r\n");
+                }
+
+        }else{
+            printf("Error:  Invalid input for operand2\r\n");
+        }
+    }else{
+        printf("Error:  Invalid input for operand1\r\n");
+    }
+}
+
+
+static void doDecimalToRomanNumeral(){
+    char input[MAX_ROMAN_NUMERAL_CHARACTERS];
+    int decimalValue;
+
+    printf("Input Decimal Integer: ");
+
+    if(getValue(input, isNumericChar)){ //get decimal value as a string
+        decimalValue = atoi(input); //Convert string to int
+        if(decimal_to_roman_numeral(decimalValue, input)){
+            printf("\r\nResult: %d is %s in roman numerals\r\n\r\n", decimalValue, input);
+        }else{
+            printf("Error: unable to convert decimal value to roman numeral value\r\n");
+        }
+    }else{
+        printf("Error: Unable to read in decimal value from command line\r\n");
+    }
+}
+
+static void doRomanNumeralToDecimal(){
+    char input[MAX_ROMAN_NUMERAL_CHARACTERS];
+    int decimalValue;
+    printf("Input Roman Numeral: ");
+    if(getValue(input, rnc_is_roman_character)){ //get a roman numeral value
+
+        if(decimalValue = roman_numeral_to_decimal(input)){
+            printf("\r\nResult: %s is %d in decimal\r\n\r\n", input, decimalValue);
+        }else{
+            printf("Error: Invalid input for roman numeral value\r\n");
+        }
+
+    }else{
+        printf("Error: Invalid input for roman numeral value\r\n");
+    }
+
+}
 

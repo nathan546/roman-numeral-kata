@@ -15,6 +15,9 @@
 
 #define MAIN_H
 
+#include "roman_numeral_calculator.h"
+#include "check_roman_numeral_calculator.h"
+#include "roman_numeral_operations_list.h"
 
 static char * mainMenu = "\r\nMain Menu - Roman Numeral Calculator Kata Exercise\r\n" \
                          "\t1) Run Addition Test Story\r\n" \
@@ -46,5 +49,15 @@ enum {ADDITION_STORY='1', SUBTRACTION_STORY='2', COMPLETE_INDUCTION='3', MANUAL_
 
 //Parsing states for MANUAL_ENTRY sub command line
 enum {MANUAL_ADDITION='1', MANUAL_SUBTRACTION='2', MANUAL_DEC_TO_RN='3', MANUAL_RN_TO_DEC='4', MANUAL_QUIT='5'};
+
+//Private functions
+static void doRomanNumeralToDecimal();
+static void doDecimalToRomanNumeral();
+static void doManualOperation(ROMAN_NUMERAL_OPERATION * romanNumeralOperation);
+static bool getValue(char * input, bool (*functionPointer)(char*));
+static void flushInput();
+static bool isNumericChar(char * input);
+static char getAlphanumericChar();
+static void manualEntry();
 
 #endif
