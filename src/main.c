@@ -46,6 +46,10 @@ int main(void){
                 manualEntry();
                 break;
 
+            case FOSS_LIST:
+                printf("%s\r\n", fossList);
+                break;
+
             case QUIT:
                 exit = 1;
                 break;

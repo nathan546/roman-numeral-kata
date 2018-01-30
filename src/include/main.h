@@ -25,7 +25,8 @@ static char * mainMenu = "\r\nMain Menu - Roman Numeral Calculator Kata Exercise
                          "\t2) Run Subtraction Test Story\r\n" \
                          "\t3) Run Complete Induction Test Story\r\n" \
                          "\t4) Manually Enter Roman Numeral Expression\r\n" \
-                         "\t5) Quit\r\n";
+                         "\t5) Quit\r\n" \
+                         "\t6) Open Source Software List\r\n";
 
 static char * manualMainMenu = "\r\nManual Menu - Manual Operations\r\n" \
                                "\t1) Run Roman Numeral Addition Calculation\r\n" \
@@ -58,8 +59,13 @@ static char * subtractionStoryDescript = \
       "\t    for a valid subtraction operation.  Input lines from the file are of the form II-I=I,\r\n" \
       "\t    so the source will subtract II-I internally and ensure the result is I using libcheck\r\n";     
 
+static char * fossList = \
+	  "\r\n\tThis is a free open source software notice letting the user know that the program uses: \r\n" \
+      "\t    Libcheck (LGPLV2) from https://github.com/libcheck/check\r\n" \
+      "\t    Libsubunit (Apache & BSD) from https://github.com/testing-cabal/subunit\r\n";
+
 //Parsing states for main command line
-enum {ADDITION_STORY='1', SUBTRACTION_STORY='2', COMPLETE_INDUCTION='3', MANUAL_ENTRY='4', QUIT='5'};
+enum {ADDITION_STORY='1', SUBTRACTION_STORY='2', COMPLETE_INDUCTION='3', MANUAL_ENTRY='4', QUIT='5', FOSS_LIST='6'};
 
 //Parsing states for MANUAL_ENTRY sub command line
 enum {MANUAL_ADDITION='1', MANUAL_SUBTRACTION='2', MANUAL_DEC_TO_RN='3', MANUAL_RN_TO_DEC='4', MANUAL_QUIT='5'};
