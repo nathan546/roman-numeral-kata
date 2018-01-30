@@ -22,6 +22,10 @@ char getAlphanumericChar(){
     return input;
 }
 
+bool isNumericChar(char * input){
+    return ( (*input >= '0') && (*input <= '9'));
+}
+
 void flushInput(){
     char input;
     
@@ -31,7 +35,8 @@ void flushInput(){
 
 }
 
-bool getRomanNumeralValue(char * input){
+
+bool getValue(char * input, bool (*functionPointer)(char*)){
     short i = 0; //Currently parsed string position
     bool doneParsing = 0;
 
@@ -50,8 +55,8 @@ bool getRomanNumeralValue(char * input){
                 input[i] = '\0'; //null termination
                 doneParsing = 1;
         }else{
-            //Only keep roman numeral characters (M, D, C, ...)
-            if(rnc_is_roman_character(&input[i])){
+            //Only accept types of characters which return true from function pointer
+            if( (*functionPointer)(&input[i]) ){
                 i++;
             }else{
                 flushInput();
@@ -60,43 +65,6 @@ bool getRomanNumeralValue(char * input){
         }
 
     }while(!doneParsing);
-
-    return doneParsing;
-}
-
-
-bool getDecimalValue(int * decValue, char * input){
-    short i = 0; //Currently parsed string position
-    bool doneParsing = 0;
-
-    do{
-
-        if(i == 0){
-            input[i] = getAlphanumericChar(); //Discard CR/LFs
-        }else{
-            input[i] = getchar(); //Monitor for CR/LFs
-        }
-
-        //End of line or exceeded max characters
-        if( i >= MAX_ROMAN_NUMERAL_CHARACTERS ||
-            input[i] == '\r'                  ||
-            input[i] == '\n' ){
-                input[i] = '\0'; //null termination
-                doneParsing = 1;
-        }else{
-            //Only keep 0 to 9 characters
-            if(input[i] >= '0' && input[i] <= '9'){
-                i++;
-            }else{
-                flushInput();
-                break;
-            }     
-        }
-
-    }while(!doneParsing);
-
-    if(doneParsing)
-        *decValue = atoi(input);
 
     return doneParsing;
 }
@@ -104,9 +72,9 @@ bool getDecimalValue(int * decValue, char * input){
 
 void doManualOperation(ROMAN_NUMERAL_OPERATION * romanNumeralOperation){
     printf("Input Operand 1: ");
-    if(getRomanNumeralValue(romanNumeralOperation->operand1)){
+    if(getValue(romanNumeralOperation->operand1, rnc_is_roman_character)){ //Get a roman numeral value
         printf("Input Operand 2: ");
-        if(getRomanNumeralValue(romanNumeralOperation->operand2)){
+        if(getValue(romanNumeralOperation->operand2, rnc_is_roman_character)){ //Get a roman numeral value
                 
                 if(rnc_perform_operation(romanNumeralOperation)){
                     printf("\r\nResult: %s %c %s = %s\r\n\r\n", romanNumeralOperation->operand1,
@@ -132,7 +100,8 @@ void doDecimalToRomanNumeral(){
 
     printf("Input Decimal Integer: ");
 
-    if(getDecimalValue(&decimalValue, input)){
+    if(getValue(input, isNumericChar)){ //get decimal value as a string
+        decimalValue = atoi(input); //Convert string to int
         if(decimal_to_roman_numeral(decimalValue, input)){
             printf("\r\nResult: %d is %s in roman numerals\r\n\r\n", decimalValue, input);
         }else{
@@ -147,7 +116,7 @@ void doRomanNumeralToDecimal(){
     char input[MAX_ROMAN_NUMERAL_CHARACTERS];
     int decimalValue;
     printf("Input Roman Numeral: ");
-    if(getRomanNumeralValue(input)){
+    if(getValue(input, rnc_is_roman_character)){ //get a roman numeral value
 
         if(decimalValue = roman_numeral_to_decimal(input)){
             printf("\r\nResult: %s is %d in decimal\r\n\r\n", input, decimalValue);

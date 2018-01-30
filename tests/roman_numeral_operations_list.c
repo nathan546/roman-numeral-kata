@@ -163,6 +163,7 @@ static bool rntList_parseOperations(ROMAN_NUMERAL_OPERATION * romanNumeralTestLi
                 case OPERAND_1:
                     if(currentChar == '+' || currentChar == '-'){
                         romanNumeralTestList[listPosition].operator = currentChar;
+                        romanNumeralTestList[listPosition].operand1[j] = 0; //Null termination
                         j = 0;
                         parseState = OPERAND_2;
                     }else{
@@ -172,6 +173,7 @@ static bool rntList_parseOperations(ROMAN_NUMERAL_OPERATION * romanNumeralTestLi
                     break;
                 case OPERAND_2:
                     if(currentChar == '='){
+                        romanNumeralTestList[listPosition].operand2[j] = 0; //Null termination
                         j = 0;
                         parseState = RESULT;
                     }else{
@@ -186,6 +188,7 @@ static bool rntList_parseOperations(ROMAN_NUMERAL_OPERATION * romanNumeralTestLi
                         currentChar == ' '  ||
                         currentChar == ';')    {
 
+                            romanNumeralTestList[listPosition].result[j] = 0; //Null termination
                             parseState = PARSE_COMPLETE;
 
                     }else{
@@ -193,7 +196,8 @@ static bool rntList_parseOperations(ROMAN_NUMERAL_OPERATION * romanNumeralTestLi
                     }                   
                     break;
             }
-            if(j == MAX_ROMAN_NUMERAL_CHARACTERS){
+
+            if(j == MAX_ROMAN_NUMERAL_CHARACTERS-1){ //leave room for null termination
                 printf("Error: Operand on line greater than %d characters\r\n", MAX_ROMAN_NUMERAL_CHARACTERS);
                 ret = 0;
                 break;
@@ -252,7 +256,7 @@ static bool rntList_parseComparisons(ROMAN_NUMERAL_OPERATION * romanNumeralTestL
                 currentChar == ' '  ||
                 currentChar == ';')    {
                 
-                    romanNumeralTestList[listPosition].operand1[j] = 0;
+                    romanNumeralTestList[listPosition].operand1[j] = 0; //Null termination
                     parseState = PARSE_COMPLETE;
                     break;
 
@@ -265,6 +269,13 @@ static bool rntList_parseComparisons(ROMAN_NUMERAL_OPERATION * romanNumeralTestL
                 romanNumeralTestList[listPosition].operand1[j++] = currentChar;
 
             }
+
+            if(j == MAX_ROMAN_NUMERAL_CHARACTERS-1){ //leave room for null termination
+                printf("Error: Operand on line greater than %d characters\r\n", MAX_ROMAN_NUMERAL_CHARACTERS);
+                ret = 0;
+                break;
+            }
+
         }
 
         if(parseState != PARSE_COMPLETE){

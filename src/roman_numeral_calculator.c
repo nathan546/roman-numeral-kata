@@ -29,9 +29,6 @@
 *				The maximum roman numeral is 3999 (MMMCMXCIX)
 *
 *
-*       - Need to complete roman_numeral_valid() function
-*       - Need to check for invalid negative numbers during subtractions
-*
 * CHANGES :
 *             DATE                  WHO                    DETAIL
 *      August 27, 2018     Nathan Barrett Morrison      Original Code
@@ -42,7 +39,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "roman_numeral_calculator.h"
-
 
 //Description:      Performs a roman numeral operation, such as II+I=III or III-I=II
 //Input Parameters: operation - Pointer to structure containing operands and operator
@@ -184,6 +180,11 @@ bool decimal_to_roman_numeral(short decimal, char * outputRomanNumeral){
 	    for(i = 0; i < ROMAN_CHARACTERS_AVAILABLE; i++){
 	        divisor = decimal / romanValues[i];
 
+	        //Terminate if we're going to overflow the MAX_ROMAN_NUMERAL_CHARACTERS character string buffer
+	        if(k >= MAX_ROMAN_NUMERAL_CHARACTERS-1){ //leave room for null termination
+	        	return 0;
+	        }
+
 	        //Check for 3x repetition of I, X, or C and compress if so
 	        if( ( romanCharacters[i] == 'I' ||
 	              romanCharacters[i] == 'X' ||
@@ -229,10 +230,10 @@ bool decimal_to_roman_numeral(short decimal, char * outputRomanNumeral){
 
 
 
-//Description:      
-//Input Parameters:
-//Return:           Success:  
-//                  Failure:  
+//Description:      Determines whether or not a string input roman numeral value is valid or not
+//Input Parameters: romanNumeral: Pointer to input roman numeral value character string
+//Return:           Success:  true
+//                  Failure:  false
 static bool roman_numeral_valid(char * romanNumeral){
     int i = 0; //current position of incoming roman numeral string
     bool ret = 1;
