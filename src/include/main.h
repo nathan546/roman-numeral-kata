@@ -1,7 +1,8 @@
 /*******************************************************************
 * 
 *
-* DESCRIPTION :      Header enumeration and strings for main.c parsing states
+* DESCRIPTION :      Header enumeration, strings, and functions for main.c parsing states
+*                    See main.c for more information
 *
 * NOTES :            None
 *
@@ -43,6 +44,19 @@ static char * completeInductionDescript = \
       "\t    If these two cases can be proven, then we can convert any roman numeral inputs to their decimal equivalents,\r\n" \
       "\t    perform basic decimal addition/subtraction on them, and then convert the result back to a roman numeral equivalent\r\n\r\n" \
       "\t    The file, complete_induction.equations contains 3999 lines (of the form 1=I, 2=II, etc) that provide an input for this proof\r\n\r\n";  
+
+
+static char * additionStoryDescript = \
+      "\r\n\tAddition Story -- \r\n\r\n" \
+      "\t    This story reads in the story_addition.equations file and compares each line\r\n" \
+      "\t    for a valid addition operation.  Input lines from the file are of the form I+I=II,\r\n" \
+      "\t    so the source will add I+I internally and ensure the result is II using libcheck\r\n";
+
+static char * subtractionStoryDescript = \
+      "\r\n\tSubtraction Story -- \r\n\r\n" \
+      "\t    This story reads in the story_subtraction.equations file and compares each line\r\n" \
+      "\t    for a valid subtraction operation.  Input lines from the file are of the form II-I=I,\r\n" \
+      "\t    so the source will subtract II-I internally and ensure the result is I using libcheck\r\n";     
 
 //Parsing states for main command line
 enum {ADDITION_STORY='1', SUBTRACTION_STORY='2', COMPLETE_INDUCTION='3', MANUAL_ENTRY='4', QUIT='5'};

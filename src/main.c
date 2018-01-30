@@ -25,17 +25,21 @@ int main(void){
         switch(input){
 
             case ADDITION_STORY:
+                printf("%s\r\n", additionStoryDescript);
                 performTestStory("./story_addition.equations", EXPRESSION_RN_OPERATIONS);
+                printf("Testing complete!\r\n");
                 break;
 
             case SUBTRACTION_STORY:
+                printf("%s\r\n", subtractionStoryDescript);
                 performTestStory("./story_subtraction.equations", EXPRESSION_RN_OPERATIONS);
+                printf("Testing complete!\r\n");
                 break;
 
             case COMPLETE_INDUCTION: 
                 printf("%s\r\n", completeInductionDescript);
                 performTestStory("./complete_induction.equations", EXPRESSION_RN_TO_DEC_COMPARISONS);
-                printf("Proof complete!\r\n\r\n");  
+                printf("Testing/Proof complete!\r\n\r\n");  
                 break;
                 
             case MANUAL_ENTRY:
