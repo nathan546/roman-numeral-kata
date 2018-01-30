@@ -14,7 +14,7 @@
 *                   [4]  Destroy roman numeral test list
 *
 * NOTES :           Seg faults from character positions > MAX_ROMAN_NUMERAL_CHARACTERS not checked yet
-*                   Discard characters that are not roman
+*
 *
 * CHANGES :
 *             DATE                  WHO                    DETAIL
