@@ -238,56 +238,58 @@ static bool roman_numeral_valid(char * romanNumeral){
     int i = 0; //current position of incoming roman numeral string
     bool ret = 1;
     char previousCharacter = 0;
+    bool previousWasSubtractive = 0; //Keep track of whether or not previous character was involved in subtractive notation
     short consecutiveCharCounts[256]; //Table to keep track of number of character occurences
                                       //Optimized for speed (256 indexes instead of ROMAN_CHARACTERS_AVAILABLE), at the cost of more ram consumption
-
+    short lengthOfString = strlen(romanNumeral);
     memset(consecutiveCharCounts, 0, 256*sizeof(consecutiveCharCounts[0])); //Zero out the counts
 
 
-    for(i = 0; i < strlen(romanNumeral); i++){
+    for(i = 0; i < lengthOfString; i++){
 
-        if(rnc_is_roman_character(&romanNumeral[i])){
+        //Keep count of each occurence of a roman character
+        consecutiveCharCounts[romanNumeral[i]]++;
 
-            //Keep count of each occurence of a roman character
-            consecutiveCharCounts[romanNumeral[i]]++;
+        //Check for too many consecutive occurences of characters any time a character has changed
+        //OR we have reached the end of the incoming string
+        if( (previousCharacter != romanNumeral[i] && previousCharacter != 0) || (i == lengthOfString-1) ){
 
-            //Check for too many consecutive occurences of characters
-            if(previousCharacter != romanNumeral[i]){
+            //If the numeral is I, X or C you can't have more than three ("II" + "II" = "IV" not “IIII”).
+            //If the numeral is V, L or D you can't have more than one ("D" + "D" = "M" not “DD”)
+            switch(previousCharacter){
 
-                //If the numeral is I, X or C you can't have more than three ("II" + "II" = "IV" not “IIII”).
-                //If the numeral is V, L or D you can't have more than one ("D" + "D" = "M" not “DD”)
-                switch(previousCharacter){
+                case 'I':
+                case 'X':
+                case 'C':
 
-                    case 'I':
-                    case 'X':
-                    case 'C':
-
-                        if(consecutiveCharCounts[previousCharacter] > 3){
-                            ret = 0;
-                            break;
-                        }else{
-                            consecutiveCharCounts[previousCharacter] = 0; //Reset consecutive counts
-                        }
+                    if(consecutiveCharCounts[previousCharacter] > 3){
+                        ret = 0;
                         break;
+                    }else{
+                        consecutiveCharCounts[previousCharacter] = 0; //Reset consecutive counts
+                    }
+                    break;
 
-                    case 'V':
-                    case 'L':
-                    case 'D':
+                case 'V':
+                case 'L':
+                case 'D':
 
-                        if(consecutiveCharCounts[previousCharacter] > 1){
-                            ret = 0;
-                            break;
-                        }else{
-                            consecutiveCharCounts[previousCharacter] = 0; //Reset consecutive counts
-                        }
+                    if(consecutiveCharCounts[previousCharacter] > 1){
+                        ret = 0;
                         break;
+                    }else{
+                        consecutiveCharCounts[previousCharacter] = 0; //Reset consecutive counts
+                    }
+                    break;
 
-                    default:
-                        break;    
-
-                }
+                default:
+                    break;    
 
             }
+
+        }
+
+        if(rnc_is_roman_character(&romanNumeral[i])){
 
             //Get to our second character before looking for subtractive notation
             if(previousCharacter != 0){
@@ -303,14 +305,19 @@ static bool roman_numeral_valid(char * romanNumeral){
                          ( romanNumeral[i] == 'C' && previousCharacter != 'X' ) ||
                          ( romanNumeral[i] == 'L' && previousCharacter != 'X' ) ||
                          ( romanNumeral[i] == 'X' && previousCharacter != 'I' ) ||
-                         ( romanNumeral[i] == 'V' && previousCharacter != 'I' )
+                         ( romanNumeral[i] == 'V' && previousCharacter != 'I' ) ||
+                         previousWasSubtractive
                        ){
 
                         ret = 0;
                         break;
 
+                    }else{
+                    	previousWasSubtractive = 1;
                     }
 
+                }else{
+                	previousWasSubtractive = 0;
                 }
 
             }
