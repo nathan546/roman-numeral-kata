@@ -40,9 +40,53 @@ Note: The romanNumeralCalculator binary must be run with the following files in 
 * story_addition.equations
 * story_subtraction.equations
 
-
 ### Software Architecture
 ![Architecture Flow Chart](./documents/flowChart.png)
+
+
+### Example Application Usage
+```sh
+$ ./romanNumeralCalculator 
+
+Main Menu - Roman Numeral Calculator Kata Exercise
+	1) Run Addition Test Story
+	2) Run Subtraction Test Story
+	3) Run Complete Induction Test Story
+	4) Manually Enter Roman Numeral Expression
+	5) Quit
+	6) Open Source Software List
+
+Enter Option From Menu: 4
+
+Manual Menu - Manual Operations
+	1) Run Roman Numeral Addition Calculation
+	2) Run Roman Numeral Subtraction Calculation
+	3) Run Decimal to Roman Numeral Converter
+	4) Run Roman Numeral to Decimal Converter 
+	5) Return to main menu
+
+Enter Option From Manual Menu: 1
+Input Operand 1: II
+Input Operand 2: II
+
+Result: II + II = IV
+
+Enter Option From Manual Menu: 2
+Input Operand 1: III
+Input Operand 2: I
+
+Result: III - I = II
+
+Enter Option From Manual Menu: 3
+Input Decimal Integer: 987
+
+Result: 987 is CMLXXXVII in roman numerals
+
+Enter Option From Manual Menu: 4
+Input Roman Numeral: MCXL
+
+Result: MCXL is 1140 in decimal
+```
 
 ## Roman Numeral rules (from original Kata):
 
