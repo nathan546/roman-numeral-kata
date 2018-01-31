@@ -40,7 +40,7 @@ complete_induction.equations, story_addition.equations, and story_subtraction.eq
 
 
 ### Software Architecture
-[![N|Solid](https://cldup.com/dTxpPi9lDf.thumb.png)](https://nodesource.com/products/nsolid)
+![Architecture Flow Chart](./documents/flowChart.png)
 
 ## Roman Numeral rules:
 
