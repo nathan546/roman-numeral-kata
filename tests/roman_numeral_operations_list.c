@@ -13,7 +13,7 @@
 *                   [3]  Confirm operations/comparisons from story file pass/fail
 *                   [4]  Destroy roman numeral test list
 *
-* NOTES :           Seg faults from character positions > MAX_ROMAN_NUMERAL_CHARACTERS not checked yet
+* NOTES :           None
 *
 *
 * CHANGES :

@@ -11,8 +11,8 @@
 *                   [4]  Read lines until empty
 *                   [4]  Close the test story
 *
-* NOTES :           Seg faults from character positions > MAX_FILE_NAME_LENGTH not checked yet
-*                   Seg faults from character positions > MAX_LINE_SIZE not checked yet
+* NOTES :           None
+*
 * CHANGES :
 *             DATE                  WHO                    DETAIL
 *      August 26, 2018     Nathan Barrett Morrison      Original Code
