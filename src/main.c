@@ -4,11 +4,7 @@
 * DESCRIPTION :     Entry point for software and main menu command line parsing functions
 *
 *
-* NOTES :                   
-*
-*              TO DO:
-*                   README.md
-*                   Flow chart?
+* NOTES :           None
 *
 *
 * CHANGES :
