@@ -36,13 +36,15 @@ $ cd build
 $ ./romanNumeralCalculator
 ```
 Note: The romanNumeralCalculator binary must be run with the following files in the same directory:
-complete_induction.equations, story_addition.equations, and story_subtraction.equations
+* complete_induction.equations
+* story_addition.equations
+* story_subtraction.equations
 
 
 ### Software Architecture
 ![Architecture Flow Chart](./documents/flowChart.png)
 
-## Roman Numeral rules:
+## Roman Numeral rules (from original Kata):
 
 * Roman numerals consist of the following letters: I, V, X, L, C, D, and M which mean one, five, ten, fifty, hundred, five hundred and one thousand respectively.
 * An example would be "XIV" + "LX" = "LXXIV" 
@@ -52,7 +54,7 @@ complete_induction.equations, story_addition.equations, and story_subtraction.eq
 * If the numeral is V, L or D you can't have more than one ("D" + "D" = "M" not “DD”)
 * The maximum roman numeral is 3999 (MMMCMXCIX) 
 
-## Stories
+## Stories (from original Kata):
 
 ### User Story: Addition
 As a Roman bookkeeper, I want to be able to add two numbers together; so that I can do my work faster with fewer mathematical errors.  
